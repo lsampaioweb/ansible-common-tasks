@@ -26,3 +26,7 @@ Repository with common Ansible tasks.
 1. vscode.
 1. hashicorp.
 1. git.
+
+# Created by: 
+
+1. Luciano Sampaio.
