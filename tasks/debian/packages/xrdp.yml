@@ -1,0 +1,21 @@
+---
+- name: Adding the user xrdp to group "ssl-cert"
+  user:
+    name: "xrdp"
+    groups: "ssl-cert"
+    append: yes
+  notify: "Restart xrdp"
+
+- name: Editing the startwm.sh file to avoid the Black Screen problem
+  blockinfile:
+    path: "/etc/xrdp/startwm.sh"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    insertbefore: "test -x"
+    block: |
+      export GNOME_SHELL_SESSION_MODE=ubuntu
+      export XDG_CURRENT_DESKTOP=ubuntu:GNOME
+
+      Unset DBUS_SESSION_BUS_ADDRESS
+      Unset XDG_RUNTIME_DIR
+  register: "output"
+  notify: "Restart xrdp"

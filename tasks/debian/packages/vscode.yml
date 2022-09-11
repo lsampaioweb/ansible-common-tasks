@@ -1,0 +1,14 @@
+---
+- name: Managing vscode extentions
+  become: false
+  import_tasks: "roles/common/tasks/debian/packages/vscode-extention.yml"  
+  vars:
+    extentions:
+      - { name: "ms-vscode-remote.remote-ssh" }
+      - { name: "ms-vscode-remote.remote-ssh-edit" }
+      - { name: "redhat.ansible" }
+      - { name: "redhat.vscode-yaml" }
+      - { name: "wholroyd.jinja" }
+      - { name: "HashiCorp.terraform" }
+      - { name: "4ops.packer" }
+      - { name: "tomoki1207.pdf" }

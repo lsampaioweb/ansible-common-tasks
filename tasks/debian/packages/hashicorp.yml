@@ -1,0 +1,32 @@
+---
+- name: Adding HashiCorp signing key
+  get_url:
+    url: "https://apt.releases.hashicorp.com/gpg"
+    dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
+
+- name: Adding repository into sources list
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc]  https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    filename: "hashicorp"
+    state: "present"
+
+- name: Installing apt packages
+  import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  vars:
+    packages:
+      - { name: "packer", update_cache: true }
+      - { name: "terraform", update_cache: true }
+
+- name: Installing auto completition for the HashiCorp packages
+  become: false
+  command: "{{ item }}"
+  register: "autocomplete_output"
+  loop:
+    - "packer -autocomplete-install"
+    - "terraform -install-autocomplete"
+  when: "output.changed"
+  failed_when:
+    - "autocomplete_output.rc != 0"
+    - "'already installed' not in autocomplete_output.stderr"
+  changed_when:
+    - "autocomplete_output.rc == 0"

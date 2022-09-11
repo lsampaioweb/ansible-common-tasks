@@ -1,0 +1,8 @@
+---
+- name: Disabling IPV6 on the server
+  replace:
+    path: "/etc/default/grub"
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT="(.*)(?<! ipv6\.disable=1)"$'
+    replace: 'GRUB_CMDLINE_LINUX_DEFAULT="\1 ipv6.disable=1"'
+  register: "output"
+  notify: "Update Grub"

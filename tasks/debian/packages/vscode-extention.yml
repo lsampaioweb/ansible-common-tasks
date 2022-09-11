@@ -1,0 +1,10 @@
+---
+- name: Managing vscode extentions
+  command: "code {{ command }} {{ item.name }}"
+  vars:
+    command: "{{ (item.state is not defined or item.state == 'install') | ternary('--install-extension', '--uninstall-extension') }}"
+  register: "output"
+  changed_when: 
+    - "'was successfully installed' in output.stdout"
+    - "'is already installed' not in output.stdout"  
+  loop: "{{ extentions }}"

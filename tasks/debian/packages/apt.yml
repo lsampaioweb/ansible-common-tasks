@@ -1,0 +1,12 @@
+---
+- name: Updating apt repository and cache
+  apt:
+    update_cache: yes
+    
+- name: Apt packages
+  apt:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default(omit) }}"
+    update_cache: "{{ item.update_cache | default(omit) }}"
+  loop: "{{ packages }}"
+  register: "output"

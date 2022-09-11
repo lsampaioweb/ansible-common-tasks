@@ -1,0 +1,17 @@
+---
+- name: Adding Google signing key
+  get_url:
+    url: "https://dl.google.com/linux/linux_signing_key.pub"
+    dest: "/etc/apt/trusted.gpg.d/google-chrome.asc"
+
+- name: Adding repository into sources list
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google-chrome.asc] http://dl.google.com/linux/chrome/deb/ stable main"
+    filename: "google-chrome"
+    state: "present"
+
+- name: Installing apt packages
+  import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  vars:
+    packages:
+      - { name: "google-chrome-stable", update_cache: true }
