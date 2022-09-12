@@ -8,4 +8,4 @@
     value: "{{ item.value | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ config }}"
-  register: "output"  
+  register: "output"

@@ -14,8 +14,8 @@
   import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
     packages:
-      - { name: "packer", update_cache: true }
-      - { name: "terraform", update_cache: true }
+      - {name: "packer", update_cache: true}
+      - {name: "terraform", update_cache: true}
 
 - name: Installing auto completition for the HashiCorp packages
   become: false

@@ -1,12 +1,12 @@
 ---
-- name: Ensure the pip package is installed and in its latest version
+- name: Ensure the pip package is installed
   pip:
     name: "pip"
-    state: "latest"
+    state: "present"
 
 - name: Python packages
   pip:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ packages }}"
-  register: "output"  
+  register: "output"

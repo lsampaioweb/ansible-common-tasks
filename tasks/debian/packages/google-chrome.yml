@@ -14,4 +14,4 @@
   import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
     packages:
-      - { name: "google-chrome-stable", update_cache: true }
+      - {name: "google-chrome-stable", update_cache: true}

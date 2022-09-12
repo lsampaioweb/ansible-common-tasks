@@ -6,4 +6,4 @@
     channel: "{{ item.channel | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ packages }}"
-  register: "output"  
+  register: "output"

@@ -1,8 +1,8 @@
 ---
 - name: Updating apt repository and cache
   apt:
-    update_cache: yes
-    
+    update_cache: true
+
 - name: Apt packages
   apt:
     name: "{{ item.name }}"

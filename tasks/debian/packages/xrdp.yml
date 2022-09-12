@@ -3,7 +3,7 @@
   user:
     name: "xrdp"
     groups: "ssl-cert"
-    append: yes
+    append: true
   notify: "Restart xrdp"
 
 - name: Editing the startwm.sh file to avoid the Black Screen problem
