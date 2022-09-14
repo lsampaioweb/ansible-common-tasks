@@ -3,8 +3,8 @@
   become: false
   git_config:
     scope: "{{ item.scope | default(omit) }}"
-    repo: "{{ item.repo   | default(omit) }}"
-    name: "{{ item.name   | default(omit) }}"
+    repo: "{{ item.repo | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
     value: "{{ item.value | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ config }}"

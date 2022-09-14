@@ -1,16 +1,49 @@
 ---
 - name: Update Grub
-  command: "update-grub"
+  ansible.builtin.command: "update-grub"
 
-- name: Reconfiguring Timezone
-  command: "dpkg-reconfigure --frontend noninteractive tzdata"
+- name: Reconfigure Timezone
+  ansible.builtin.command: "dpkg-reconfigure --frontend noninteractive tzdata"
 
-- name: Restarting Systemd-Timesyncd
-  service:
+- name: Restart Systemd-Timesyncd
+  ansible.builtin.service:
     name: "systemd-timesyncd"
     state: "restarted"
 
 - name: Restart xrdp
-  systemd:
+  ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
+
+- name: HashiCorp Auto Completition
+  become: false
+  ansible.builtin.command: "{{ item }}"
+  register: "autocomplete_output"
+  loop:
+    - "packer -autocomplete-install"
+    - "terraform -install-autocomplete"
+  failed_when:
+    - autocomplete_output.rc != 0
+    - "'already installed' not in autocomplete_output.stderr"
+  changed_when:
+    - autocomplete_output.rc == 0
+
+- name: Reboot host
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 120
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: "whoami"
+
+- name: Restart network
+  ansible.builtin.service:
+    name: "networking"
+    state: "restarted"
+  poll: 0
+  async: 10
+
+- name: Wait for the network device to reload
+  ansible.builtin.wait_for_connection:
+    delay: 1

@@ -3,4 +3,4 @@
   timezone:
     name: "{{ timezone }}"
   register: "output"
-  notify: "Reconfiguring Timezone"
+  notify: "Reconfigure Timezone"

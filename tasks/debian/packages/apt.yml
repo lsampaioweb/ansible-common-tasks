@@ -1,10 +1,10 @@
 ---
 - name: Updating apt repository and cache
-  apt:
+  ansible.builtin.apt:
     update_cache: true
 
 - name: Apt packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
     update_cache: "{{ item.update_cache | default(omit) }}"

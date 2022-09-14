@@ -1,11 +1,12 @@
 ---
 - name: Adding Google signing key
-  get_url:
+  ansible.builtin.get_url:
     url: "https://dl.google.com/linux/linux_signing_key.pub"
     dest: "/etc/apt/trusted.gpg.d/google-chrome.asc"
+    mode: '0644'
 
 - name: Adding repository into sources list
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google-chrome.asc] http://dl.google.com/linux/chrome/deb/ stable main"
     filename: "google-chrome"
     state: "present"

@@ -1,11 +1,12 @@
 ---
 - name: Adding HashiCorp signing key
-  get_url:
+  ansible.builtin.get_url:
     url: "https://apt.releases.hashicorp.com/gpg"
     dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
+    mode: '0644'
 
 - name: Adding repository into sources list
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc]  https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
     filename: "hashicorp"
     state: "present"
@@ -16,17 +17,8 @@
     packages:
       - {name: "packer", update_cache: true}
       - {name: "terraform", update_cache: true}
+  notify:
+    - "HashiCorp Auto Completition"
 
-- name: Installing auto completition for the HashiCorp packages
-  become: false
-  command: "{{ item }}"
-  register: "autocomplete_output"
-  loop:
-    - "packer -autocomplete-install"
-    - "terraform -install-autocomplete"
-  when: "output.changed"
-  failed_when:
-    - "autocomplete_output.rc != 0"
-    - "'already installed' not in autocomplete_output.stderr"
-  changed_when:
-    - "autocomplete_output.rc == 0"
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  ansible.builtin.meta: "flush_handlers"

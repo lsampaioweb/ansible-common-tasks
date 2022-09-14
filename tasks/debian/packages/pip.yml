@@ -1,11 +1,11 @@
 ---
 - name: Ensure the pip package is installed
-  pip:
+  ansible.builtin.pip:
     name: "pip"
     state: "present"
 
 - name: Python packages
-  pip:
+  ansible.builtin.pip:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ packages }}"

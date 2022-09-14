@@ -1,13 +1,13 @@
 ---
 - name: Adding the user xrdp to group "ssl-cert"
-  user:
+  ansible.builtin.user:
     name: "xrdp"
     groups: "ssl-cert"
     append: true
   notify: "Restart xrdp"
 
 - name: Editing the startwm.sh file to avoid the Black Screen problem
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "/etc/xrdp/startwm.sh"
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     insertbefore: "test -x"
