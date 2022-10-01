@@ -3,7 +3,7 @@
   ansible.builtin.get_url:
     url: "https://dl.google.com/linux/linux_signing_key.pub"
     dest: "/etc/apt/trusted.gpg.d/google-chrome.asc"
-    mode: '0644'
+    mode: "0644"
 
 - name: Adding repository into sources list
   ansible.builtin.apt_repository:
