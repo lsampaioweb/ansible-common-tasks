@@ -1,5 +1,5 @@
 ---
-- name: Adding the fingerprint of host {{ host.name }} into the know_hosts file
+- name: Adding the fingerprint into the know_hosts file
   ansible.builtin.known_hosts:
     name: "{{ host.name }}"
     key: "{{ host.key }}"
