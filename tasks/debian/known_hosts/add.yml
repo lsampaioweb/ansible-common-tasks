@@ -5,6 +5,5 @@
     key: "{{ host.key }}"
     state: "{{ item.state | default('present') }}"
     hash_host: "{{ item.hash_host | default('false') }}"
-  ignore_errors: true
   when: host.name | length > 0 and host.key | length > 0
   register: "output"
