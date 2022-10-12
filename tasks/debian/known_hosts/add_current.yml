@@ -1,0 +1,27 @@
+---
+- name: "Ensure the .ssh directory exists"
+  delegate_to: "{{ delegate_to | default('localhost') }}"
+  become: "{{ become | default(false) }}"
+  ansible.builtin.file:
+    path: "~/.ssh/"
+    state: "directory"
+    mode: "0700"
+
+- name: Retrieving the fingerprint of the host
+  delegate_to: "{{ delegate_to | default('localhost') }}"
+  ansible.builtin.set_fact:
+    fingerprints: "{{ {'name': host_ip, 'key': host_key} }}"
+  vars:
+    ssh_key_type: "ecdsa"
+    host_ip: "{{ ansible_host }}"
+    host_key: "{{ lookup('pipe', 'ssh-keyscan -t ' + ssh_key_type + ' ' + host_ip, errors='ignore') }}"
+
+- name: "Printing the fingerprint (name and key)"
+  ansible.builtin.debug:
+    msg: "{{ fingerprints }}"
+  when: debug | bool
+
+- name: "Ensure the fingerprint is present in the known_hosts file"
+  ansible.builtin.include_tasks: "{{ path_debian_known_hosts_add }}"
+  vars:
+    host: "{{ fingerprints }}"
