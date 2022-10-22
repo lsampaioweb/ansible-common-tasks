@@ -1,21 +1,21 @@
 ---
-- name: Update Grub
+- name: "Update Grub"
   ansible.builtin.command: "update-grub"
 
-- name: Reconfigure Timezone
+- name: "Reconfigure Timezone"
   ansible.builtin.command: "dpkg-reconfigure --frontend noninteractive tzdata"
 
-- name: Restart Systemd-Timesyncd
+- name: "Restart Systemd-Timesyncd"
   ansible.builtin.service:
     name: "systemd-timesyncd"
     state: "restarted"
 
-- name: Restart xrdp
+- name: "Restart xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
 
-- name: HashiCorp Auto Completition
+- name: "HashiCorp Auto Completition"
   become: false
   ansible.builtin.command: "{{ item }}"
   register: "autocomplete_output"
@@ -28,7 +28,7 @@
   changed_when:
     - autocomplete_output.rc == 0
 
-- name: Reboot host
+- name: "Reboot host"
   ansible.builtin.reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5
@@ -37,13 +37,17 @@
     post_reboot_delay: 10
     test_command: "whoami"
 
-- name: Restart network
+- name: "Restart network"
   ansible.builtin.service:
     name: "networking"
     state: "restarted"
   poll: 0
   async: 10
 
-- name: Wait for the network device to reload
+- name: "Wait for the network device to reload"
   ansible.builtin.wait_for_connection:
     delay: 1
+
+- name: "Update CA Certificates"
+  ansible.builtin.command: "update-ca-certificates"
+  register: "output"
