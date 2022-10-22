@@ -12,7 +12,7 @@ Repository with common Ansible tasks.
 ### 2. Network
 
 1. Disable IPV6
-  Set GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1".
+  Set GRUB_CMDLINE_LINUX="ipv6.disable=1".
 
 ### 3. OS
 
