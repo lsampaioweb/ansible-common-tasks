@@ -1,17 +1,17 @@
 ---
-- name: Adding HashiCorp signing key
+- name: "Adding HashiCorp signing key"
   ansible.builtin.get_url:
     url: "https://apt.releases.hashicorp.com/gpg"
     dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
     mode: "0644"
 
-- name: Adding repository into sources list
+- name: "Adding repository into sources list"
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc]  https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
     filename: "hashicorp"
     state: "present"
 
-- name: Installing apt packages
+- name: "Installing apt packages"
   import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
     packages:
@@ -20,5 +20,5 @@
   notify:
     - "HashiCorp Auto Completition"
 
-- name: Force all notified handlers to run at this point, not waiting for normal sync points
+- name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"

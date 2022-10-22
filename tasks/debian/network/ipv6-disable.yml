@@ -1,5 +1,5 @@
 ---
-- name: Disabling IPV6 on the server
+- name: "Disabling IPV6 on the server"
   ansible.builtin.replace:
     path: "/etc/default/grub"
     regexp: '^GRUB_CMDLINE_LINUX="(.*)(?<! ipv6\.disable=1)"$'

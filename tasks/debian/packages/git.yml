@@ -1,7 +1,7 @@
 ---
-- name: Setting git config
+- name: "Setting git config"
   become: false
-  git_config:
+  community.general.git_config:
     scope: "{{ item.scope | default(omit) }}"
     repo: "{{ item.repo | default(omit) }}"
     name: "{{ item.name | default(omit) }}"

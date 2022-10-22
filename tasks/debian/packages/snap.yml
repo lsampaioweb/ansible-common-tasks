@@ -1,6 +1,6 @@
 ---
-- name: Snap packages
-  snap:
+- name: "Snap packages"
+  community.general.snap:
     name: "{{ item.name }}"
     classic: "{{ item.classic | default(omit) }}"
     channel: "{{ item.channel | default(omit) }}"

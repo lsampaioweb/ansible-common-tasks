@@ -1,0 +1,14 @@
+---
+- name: "Removing the machine-id file"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+  loop:
+    - "/etc/machine-id"
+    - "/var/lib/dbus/machine-id"
+
+- name: "Creating the machine-id file"
+  ansible.builtin.file:
+    path: "/etc/machine-id"
+    state: "touch"
+    mode: "0444"

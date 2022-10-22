@@ -7,7 +7,7 @@
     state: "directory"
     mode: "0700"
 
-- name: Retrieving the fingerprint of the host
+- name: "Retrieving the fingerprint of the host"
   delegate_to: "{{ delegate_to | default('localhost') }}"
   ansible.builtin.set_fact:
     fingerprints: "{{ {'name': host_ip, 'key': host_key} }}"

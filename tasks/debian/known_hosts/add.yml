@@ -1,5 +1,5 @@
 ---
-- name: Adding the fingerprint into the know_hosts file
+- name: "Adding the fingerprint into the know_hosts file"
   delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
   ansible.builtin.known_hosts:

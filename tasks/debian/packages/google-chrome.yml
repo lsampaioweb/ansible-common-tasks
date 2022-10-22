@@ -1,17 +1,17 @@
 ---
-- name: Adding Google signing key
+- name: "Adding Google signing key"
   ansible.builtin.get_url:
     url: "https://dl.google.com/linux/linux_signing_key.pub"
     dest: "/etc/apt/trusted.gpg.d/google-chrome.asc"
     mode: "0644"
 
-- name: Adding repository into sources list
+- name: "Adding repository into sources list"
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google-chrome.asc] http://dl.google.com/linux/chrome/deb/ stable main"
     filename: "google-chrome"
     state: "present"
 
-- name: Installing apt packages
+- name: "Installing apt packages"
   import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
     packages:

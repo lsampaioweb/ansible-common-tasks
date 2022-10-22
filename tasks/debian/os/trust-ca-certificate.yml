@@ -1,0 +1,10 @@
+---
+- name: "Copying certificate to host"
+  ansible.builtin.copy:
+    src: "{{ ssl_certificate_path }}"
+    dest: "/usr/local/share/ca-certificates/"
+    mode: "644"
+  notify: "Update CA Certificates"
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  ansible.builtin.meta: "flush_handlers"

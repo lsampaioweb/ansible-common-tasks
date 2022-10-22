@@ -1,7 +1,7 @@
 ---
-- name: Managing vscode extentions
+- name: "Managing vscode extentions"
   become: false
-  import_tasks: "roles/common/tasks/debian/packages/vscode-extention.yml"
+  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/vscode-extention.yml"
   vars:
     extentions:
       - {name: "ms-vscode-remote.remote-ssh"}
