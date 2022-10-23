@@ -1,0 +1,4 @@
+---
+- name: "Setting the name of the server"
+  ansible.builtin.hostname:
+    name: "{{ hostname }}"
