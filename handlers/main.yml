@@ -51,3 +51,9 @@
 - name: "Update CA Certificates"
   ansible.builtin.command: "update-ca-certificates"
   register: "output"
+
+- name: "Restarting and Enabling fail2ban"
+  ansible.builtin.service:
+    name: "fail2ban"
+    state: "restarted"
+    enabled: true

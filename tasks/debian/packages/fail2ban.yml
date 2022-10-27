@@ -1,0 +1,8 @@
+---
+- name: "Copying the ssh jail config file"
+  ansible.builtin.copy:
+    src: "ssh.conf"
+    dest: "/etc/fail2ban/jail.d/ssh.conf"
+    mode: "640"
+  notify:
+    - "Restarting and Enabling fail2ban"
