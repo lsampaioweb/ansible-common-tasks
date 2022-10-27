@@ -16,3 +16,17 @@
   vars:
     packages:
       - {name: "google-chrome-stable", update_cache: true}
+
+- name: "Installing certificate to system-wide"
+  become: false
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    certutil -A -d sql:$HOME/.pki/nssdb
+    -t 'C,,'
+    -n 'HomeLab-Certificate-Authority'
+    -i '{{ certificate_authority_path }}'
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  changed_when: output.rc == 0
+  failed_when: (output.rc != 0)
