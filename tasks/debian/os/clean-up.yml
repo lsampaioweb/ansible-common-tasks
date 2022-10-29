@@ -1,0 +1,45 @@
+---
+- name: "Searching for log and temp files that can be removed"
+  ansible.builtin.find:
+    paths:
+      - "/var/log"
+      - "/var/tmp"
+      - "/tmp"
+    patterns: "*"
+    recurse: true
+  register: "temp_files_to_delete"
+
+- name: "Searching for SSH files that can be removed"
+  ansible.builtin.find:
+    paths:
+      - "/etc/ssh"
+    patterns: "ssh_host_*"
+  register: "ssh_files_to_delete"
+
+- name: "Removing unnecessary files"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "absent"
+  loop: "{{ temp_files_to_delete.files + ssh_files_to_delete.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
+
+- name: "Generating SSH host keys"
+  ansible.builtin.command: "dpkg-reconfigure openssh-server"
+  register: "output"
+  changed_when: output.rc == 0
+  failed_when: (output.rc != 0)
+  when: ssh_files_to_delete.files | length > 0
+  notify: "Restarting the SSH server"
+
+- name: "Removing the history of terminal commands"
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    history -cw && \
+    echo > ~/.bash_history
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  changed_when: output.rc == 0
+  failed_when: (output.rc != 0)

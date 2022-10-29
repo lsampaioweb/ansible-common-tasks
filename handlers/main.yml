@@ -57,3 +57,8 @@
     name: "fail2ban"
     state: "restarted"
     enabled: true
+
+- name: "Restarting the SSH server"
+  ansible.builtin.service:
+    name: "ssh"
+    state: "restarted"
