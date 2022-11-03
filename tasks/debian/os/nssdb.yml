@@ -1,0 +1,27 @@
+---
+- name: "Checking if the folder {{ nssdb_path }} exists"
+  ansible.builtin.stat:
+    path: "{{ nssdb_path }}"
+  register: "nssdb_stat"
+
+- name: "Creating the folder {{ nssdb_path }}"
+  ansible.builtin.file:
+    path: "{{ nssdb_path }}"
+    state: "directory"
+    recurse: true
+  when: not nssdb_stat.stat.exists
+
+- name: "Initializing an empty database at {{ nssdb_path }}"
+  ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
+  when: not nssdb_stat.stat.exists
+
+- name: "Installing the certificates at {{ nssdb_path }}"
+  ansible.builtin.command: >
+    certutil -A -d 'sql:{{ nssdb_path }}'
+    -t '{{ item.trust }}'
+    -n '{{ item.name }}'
+    -i '{{ item.path }}'
+  loop: '{{ nssdb_certificates }}'
+  register: "output"
+  changed_when: output.rc == 0
+  failed_when: (output.rc != 0)
