@@ -1,0 +1,18 @@
+---
+- name: "Managing UFW rules"
+  community.general.ufw:
+    rule: "{{ item.rule | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    direction: "{{ item.direction | default(omit) }}"
+    src: "{{ item.src | default(omit) }}"
+    dest: "{{ item.dest | default(omit) }}"
+    proto: "{{ item.proto | default(omit) }}"
+    route: "{{ item.route | default(omit) }}"
+    insert: "{{ item.insert | default(omit) }}"
+    delete: "{{ item.delete | default(omit) }}"
+    log: "{{ item.log | default(omit) }}"
+    logging: "{{ item.logging | default(omit) }}"
+    comment: "{{ item.comment | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+  loop: "{{ rules }}"
+  register: "output"
