@@ -1,0 +1,106 @@
+---
+- name: "Creating variables"
+  ansible.builtin.set_fact:
+    ssh_path: "{{ temp_ssh_path }}"
+    ca_host_key_path: "{{ temp_ssh_path }}/ca_host_key"
+    host_key_path: "{{ temp_ssh_path }}/{{ ansible_hostname }}"
+  vars:
+    temp_ssh_path: "/etc/ssh"
+
+- name: "Creating the Certificate Authority (CA) OpenSSH keypair"
+  delegate_to: "{{ host }}"
+  community.crypto.openssh_keypair:
+    path: "{{ ca_host_key_path }}"
+    type: "ed25519"
+    regenerate: "full_idempotence"
+    comment: "HomeLab Certificate Authority OpenSSH keypair"
+    state: "present"
+  register: "ca_output"
+
+- name: "Ensure the '{{ host_key_path }}' directory exists"
+  delegate_to: "{{ host }}"
+  ansible.builtin.file:
+    path: "{{ host_key_path }}"
+    state: "directory"
+    mode: "0655"
+
+- name: "Creating the Host OpenSSH keypair"
+  delegate_to: "{{ host }}"
+  community.crypto.openssh_keypair:
+    path: "{{ host_key_path }}/ssh_host_{{ item.name }}_key"
+    type: "{{ item.name }}"
+    size: "{{ item.size | default(omit) }}"
+    regenerate: "full_idempotence"
+    comment: "{{ item.name }} key"
+    state: "present"
+  loop:
+    - { name: "ecdsa" }
+    - { name: "ed25519" }
+    - { name: "rsa", size: 2048 }
+  register: "host_output"
+
+- name: "Signing the Host OpenSSH keypair with the CA key"
+  delegate_to: "{{ host }}"
+  community.crypto.openssh_cert:
+    type: "host"
+    signing_key: "{{ ca_host_key_path }}"
+    public_key: "{{ host_key_path }}/ssh_host_{{ item.name }}_key"
+    path: "{{ host_key_path }}/ssh_host_{{ item.name }}_key-cert.pub"
+    regenerate: "full_idempotence"
+    valid_from: "{{ valid_from | default('always') }}"
+    valid_to: "{{ valid_to | default('forever') }}"
+    principals: "{{ principals | default(omit) }}"
+    state: "present"
+  loop:
+    - { name: "ecdsa" }
+    - { name: "ed25519" }
+    - { name: "rsa"}
+  register: "cert_output"
+
+- name: "Searching for the created OpenSSH keypair files"
+  delegate_to: "{{ host }}"
+  ansible.builtin.find:
+    paths: "{{ host_key_path }}/"
+    patterns: "ssh_host_*"
+  register: "ssh_files"
+
+- name: "Changing the permission so the OpenSSH keypair files can be copied"
+  delegate_to: "{{ host }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "0644"
+  loop: "{{ ssh_files.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
+  when: host_output.changed or cert_output.changed
+
+- name: "Copying the OpenSSH keypair files to the target machine"
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ ssh_path }}/"
+    mode: "{{ (item.path.endswith('.pub')) | ternary('0644', '600') }}"
+  loop: "{{ ssh_files.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
+  when: host_output.changed or cert_output.changed
+  notify: "Restarting the SSH server"
+
+- name: "Changing the permission on the OpenSSH keypair files back to its original value"
+  delegate_to: "{{ host }}"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ (item.path.endswith('.pub')) | ternary('0644', '600') }}"
+  loop: "{{ ssh_files.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
+  when: host_output.changed or cert_output.changed
+
+- name: "Copying default ssh config file to the target machine"
+  ansible.builtin.copy:
+    src: "ssh.conf"
+    dest: "{{ ssh_path }}/sshd_config.d/"
+    mode: "preserve"
+  notify: "Restarting the SSH server"
