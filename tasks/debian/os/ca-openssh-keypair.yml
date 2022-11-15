@@ -1,0 +1,10 @@
+---
+- name: "Creating the Certificate Authority (CA) OpenSSH keypair"
+  delegate_to: "{{ delegate_to | default('localhost') }}"
+  community.crypto.openssh_keypair:
+    path: "{{ path | default('/etc/ssh/ca_host_key') }}"
+    type: "{{ type | default('ed25519') }}"
+    regenerate: "{{ regenerate | default('full_idempotence') }}"
+    comment: "{{ comment | default('HomeLab Certificate Authority OpenSSH Keypair') }}"
+    state: "{{ state | default('present') }}"
+  register: "ca_output"
