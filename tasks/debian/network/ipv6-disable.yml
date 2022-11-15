@@ -6,3 +6,22 @@
     replace: 'GRUB_CMDLINE_LINUX="\1 ipv6.disable=1"'
   register: "output"
   notify: "Update Grub"
+
+- name: "Copying the disable IPV6 config file to the server"
+  ansible.builtin.copy:
+    src: "disable-ipv6.conf"
+    dest: "/etc/sysctl.d/disable-ipv6.conf"
+    mode: "preserve"
+  register: "output"
+
+- name: "Populating the service facts"
+  ansible.builtin.service_facts:
+  when: output.changed
+
+- name: "Disabling IPV6 with network manager"
+  ansible.builtin.command: "/bin/nmcli device modify {{ ansible_default_ipv4.interface }} ipv6.method 'disabled'"
+  when:
+    - output.changed
+    - ansible_facts.services["NetworkManager.service"] is defined and ansible_facts.services["NetworkManager.service"]['status'] == 'enabled'
+  register: "output"
+  notify: "Restart network"
