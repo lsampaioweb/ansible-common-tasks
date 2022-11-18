@@ -5,7 +5,7 @@
       - "/var/log"
       - "/var/tmp"
       - "/tmp"
-    patterns: "*"
+    patterns: '*.gz,*.log.*'
     recurse: true
   register: "temp_files_to_delete"
 
