@@ -1,0 +1,6 @@
+---
+- name: "Copying CPU hotplug rule to the target host"
+  ansible.builtin.copy:
+    src: "80-hotplug-cpu.rules"
+    dest: "/lib/udev/rules.d/"
+    mode: "644"
