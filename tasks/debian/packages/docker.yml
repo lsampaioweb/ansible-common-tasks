@@ -1,0 +1,44 @@
+---
+- name: "Installing Docker dependencies"
+  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  vars:
+    packages:
+      - {name: "apt-transport-https"}
+      - {name: "ca-certificates"}
+      - {name: "curl"}
+      - {name: "software-properties-common"}
+
+- name: "Adding Docker signing key"
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    dest: "/usr/share/keyrings/docker-archive-keyring.asc"
+    mode: "0644"
+    force: true
+
+- name: "Adding repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
+    https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    filename: "docker"
+    state: "present"
+
+- name: "Installing apt packages"
+  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  vars:
+    packages:
+      - {name: "docker-ce", update_cache: true, install_recommends: true}
+      - {name: "docker-compose"}
+      - {name: "docker-registry"}
+      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
+
+- name: "Adding the usr_ansible user into the 'docker' group"
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: "docker"
+    append: true
+
+- name: "Ensure the docker services is enabled"
+  ansible.builtin.service:
+    name: "docker"
+    state: "started"
+    enabled: true
