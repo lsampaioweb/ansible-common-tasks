@@ -3,6 +3,11 @@
   ansible.builtin.apt:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
+    upgrade: "{{ item.upgrade | default(omit) }}"
     update_cache: "{{ item.update_cache | default(omit) }}"
+    install_recommends: "{{ item.install_recommends | default(omit) }}"
+    clean: "{{ item.clean | default(omit) }}"
+    autoclean: "{{ item.autoclean | default(omit) }}"
+    autoremove: "{{ item.autoremove | default(omit) }}"
   loop: "{{ packages }}"
   register: "output"
