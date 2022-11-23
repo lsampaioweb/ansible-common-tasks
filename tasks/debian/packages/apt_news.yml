@@ -2,7 +2,7 @@
 - name: "Checking if the apt_news is true"
   ansible.builtin.shell: >-
     set -o pipefail && \
-    sudo pro config show apt_news | cut -d' ' -f2
+    pro config show apt_news | cut -d' ' -f2
   args:
     executable: "/usr/bin/bash"
   register: "apt_news_active"
@@ -11,7 +11,7 @@
 - name: "Setting apt_news to false"
   ansible.builtin.shell: >-
     set -o pipefail && \
-    sudo pro config set apt_news=false
+    pro config set apt_news=false
   args:
     executable: "/usr/bin/bash"
   register: "output"
