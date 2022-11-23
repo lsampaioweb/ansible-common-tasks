@@ -63,3 +63,9 @@
     name: "ssh"
     state: "restarted"
   failed_when: false
+
+- name: "Restarting and Enabling docker"
+  ansible.builtin.service:
+    name: "docker"
+    state: "restarted"
+    enabled: true

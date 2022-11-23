@@ -30,15 +30,13 @@
       - {name: "docker-compose"}
       - {name: "docker-registry"}
       - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
+  notify: "Restarting and Enabling docker"
 
-- name: "Adding the usr_ansible user into the 'docker' group"
+- name: "Force all notified handlers to run at this point, not waiting for normal sync points"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "Adding the {{ ansible_user }} user into the 'docker' group"
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: "docker"
     append: true
-
-- name: "Ensure the docker services is enabled"
-  ansible.builtin.service:
-    name: "docker"
-    state: "started"
-    enabled: true
