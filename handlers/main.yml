@@ -79,3 +79,8 @@
     executable: "/usr/bin/bash"
   register: "source_output"
   changed_when: source_output.rc == 0
+
+- name: "Restart keepalived"
+  ansible.builtin.systemd:
+    name: "keepalived"
+    state: "restarted"
