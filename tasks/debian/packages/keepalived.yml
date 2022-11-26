@@ -1,5 +1,5 @@
 ---
-- name: "Copying the keepalived.conf file"
+- name: "Copying the keepalived.conf file to the target"
   ansible.builtin.template:
     src: "keepalived.j2"
     dest: "/etc/keepalived/keepalived.conf"
