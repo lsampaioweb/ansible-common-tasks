@@ -1,0 +1,10 @@
+---
+- name: "Adding the xclip config in the '~/.bashrc' file"
+  become: false
+  ansible.builtin.blockinfile:
+    path: "~/.bashrc"
+    marker: "# {mark} Linux xclip"
+    block: |
+      alias pbcopy='xclip -selection clipboard'
+      alias pbpaste='xclip -selection clipboard -o'
+  notify: "Refresh ~/.bashrc"

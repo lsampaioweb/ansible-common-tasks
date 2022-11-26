@@ -69,3 +69,13 @@
     name: "docker"
     state: "restarted"
     enabled: true
+
+- name: "Refresh ~/.bashrc"
+  become: false
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    source ~/.bashrc
+  args:
+    executable: "/usr/bin/bash"
+  register: "source_output"
+  changed_when: source_output.rc == 0
