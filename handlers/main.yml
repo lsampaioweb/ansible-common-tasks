@@ -84,3 +84,9 @@
   ansible.builtin.systemd:
     name: "keepalived"
     state: "restarted"
+
+- name: "Restart qemu-guest-agent"
+  ansible.builtin.service:
+    name: "qemu-guest-agent"
+    state: "started"
+    enabled: true

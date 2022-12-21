@@ -1,0 +1,42 @@
+---
+- name: "Searching for log and temp files that can be removed"
+  ansible.builtin.find:
+    paths:
+      - "/var/log"
+      - "/var/tmp"
+      - "/tmp"
+    patterns: '*.gz,*.log.*'
+    recurse: true
+  register: "temp_files_to_delete"
+
+- name: "Removing unnecessary files"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "absent"
+  loop: "{{ temp_files_to_delete.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
+
+- name: "Searching for log and temp files that can be truncant its contents"
+  ansible.builtin.find:
+    paths:
+      - "/var/log"
+      - "/var/tmp"
+      - "/tmp"
+    patterns: '*.log'
+    recurse: true
+  register: "temp_files_to_truncate"
+
+- name: "Truncating the log files"
+  ansible.builtin.shell: >-
+    # set -o pipefail && \
+    cat /dev/null > {{ item.path }}
+  args:
+    executable: "/bin/sh"
+  register: "output"
+  changed_when: output.rc == 0
+  loop: "{{ temp_files_to_truncate.files }}"
+  loop_control:
+    index_var: "index"
+    label: "{{ index }} - {{ item.path }}"
