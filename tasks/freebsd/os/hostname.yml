@@ -3,7 +3,7 @@
   ansible.builtin.hostname:
     name: "{{ hostname }}"
 
-- name: "Setting the qemu-guest-agent to auto start"
+- name: "Setting the hostname in the /etc/rc.conf"
   ansible.builtin.lineinfile:
     path: "/etc/rc.conf"
     regexp: "hostname="

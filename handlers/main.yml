@@ -52,6 +52,10 @@
   ansible.builtin.command: "update-ca-certificates"
   register: "output"
 
+- name: "Update CA Certificates FreeBSD"
+  ansible.builtin.command: "certctl rehash"
+  register: "output"
+
 - name: "Restarting and Enabling fail2ban"
   ansible.builtin.service:
     name: "fail2ban"

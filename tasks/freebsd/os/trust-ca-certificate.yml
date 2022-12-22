@@ -1,0 +1,14 @@
+---
+- name: "Creating variables"
+  ansible.builtin.set_fact:
+    certificate_path: "/usr/local/share/certs/"
+
+- name: "Copying certificate to host"
+  ansible.builtin.copy:
+    src: "{{ ssl_certificate_path }}"
+    dest: "{{ certificate_path }}"
+    mode: "0644"
+  notify: "Update CA Certificates FreeBSD"
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  ansible.builtin.meta: "flush_handlers"
