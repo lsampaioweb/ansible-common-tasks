@@ -48,6 +48,15 @@
   ansible.builtin.wait_for_connection:
     delay: 1
 
+- name: "Restart network of VMs"
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    for tapdev in `ip a | grep tap | awk '{print $2}' | sed s/://`; do brctl addif vmbr0 $tapdev; done
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  changed_when: output.rc == 0
+
 - name: "Update CA Certificates"
   ansible.builtin.command: "update-ca-certificates"
   register: "output"
