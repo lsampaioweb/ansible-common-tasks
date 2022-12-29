@@ -55,6 +55,9 @@
   args:
     executable: "/usr/bin/bash"
   register: "output"
+  failed_when:
+    - output.rc != 0
+    - "'already a member' not in output.stderr"
   changed_when: output.rc == 0
 
 - name: "Update CA Certificates"
