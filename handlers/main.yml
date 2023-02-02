@@ -14,6 +14,7 @@
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
+    enabled: true
 
 - name: "HashiCorp Auto Completition"
   become: false
@@ -70,6 +71,7 @@
   ansible.builtin.service:
     name: "ssh"
     state: "restarted"
+    enabled: true
   failed_when: false
 
 - name: "Restarting and Enabling docker"
@@ -88,10 +90,11 @@
   register: "source_output"
   changed_when: source_output.rc == 0
 
-- name: "Restart keepalived"
+- name: "Restarting and Enabling keepalived"
   ansible.builtin.systemd:
     name: "keepalived"
     state: "restarted"
+    enabled: true
 
 - name: "Restart qemu-guest-agent"
   ansible.builtin.service:

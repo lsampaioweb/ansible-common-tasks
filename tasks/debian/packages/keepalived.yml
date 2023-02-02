@@ -4,4 +4,4 @@
     src: "keepalived.j2"
     dest: "/etc/keepalived/keepalived.conf"
     mode: "0640"
-  notify: "Restart keepalived"
+  notify: "Restarting and Enabling keepalived"

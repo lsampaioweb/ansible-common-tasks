@@ -1,4 +1,10 @@
 ---
+- name: "Upgrading the packages"
+  ansible.builtin.apt:
+    update_cache: "{{ update_cache | default(true) }}"
+    upgrade: "{{ upgrade | default('safe') }}"
+  when: update_cache is defined or upgrade is defined
+
 - name: "Apt packages"
   ansible.builtin.apt:
     name: "{{ item.name }}"
@@ -11,3 +17,14 @@
     autoremove: "{{ item.autoremove | default(omit) }}"
   loop: "{{ packages }}"
   register: "output"
+
+- name: "Manually upgrading any left over packages"
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    sudo apt list -u -q 2>/dev/null | grep "/" | cut -d/ -f1 | xargs -n 1 sudo apt install -y
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  failed_when: false
+  changed_when: output.rc == 0
+  when: upgrade is defined
