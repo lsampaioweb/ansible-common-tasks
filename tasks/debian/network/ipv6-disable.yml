@@ -14,13 +14,20 @@
     mode: "preserve"
   register: "output"
 
+- name: "Removing all IPV6 references from the /etc/hosts file"
+  ansible.builtin.replace:
+    path: "/etc/hosts"
+    regexp: '^([^#\n]*[:]{2}.*)$'
+    replace: '#\1'
+
 - name: "Populating the service facts"
   ansible.builtin.service_facts:
-  when: output.changed
+  when: output is defined and output.changed
 
 - name: "Disabling IPV6 with network manager"
   ansible.builtin.command: "/bin/nmcli device modify {{ ansible_default_ipv4.interface }} ipv6.method 'disabled'"
   when:
+    - output is defined
     - output.changed
     - ansible_facts.services["NetworkManager.service"] is defined and ansible_facts.services["NetworkManager.service"]['status'] == 'enabled'
   register: "output"
