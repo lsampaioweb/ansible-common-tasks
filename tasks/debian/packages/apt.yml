@@ -15,7 +15,7 @@
     clean: "{{ item.clean | default(omit) }}"
     autoclean: "{{ item.autoclean | default(omit) }}"
     autoremove: "{{ item.autoremove | default(omit) }}"
-  loop: "{{ packages }}"
+  loop: "{{ packages | default([]) }}"
   register: "output"
 
 - name: "Manually upgrading any left over packages"
