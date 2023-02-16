@@ -10,9 +10,20 @@
     name: "systemd-timesyncd"
     state: "restarted"
 
+- name: "Restart Systemd-Resolved"
+  ansible.builtin.service:
+    name: "systemd-resolved"
+    state: "restarted"
+
 - name: "Restart xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
+    state: "restarted"
+    enabled: true
+
+- name: "Restart Bind9"
+  ansible.builtin.systemd:
+    name: "bind9"
     state: "restarted"
     enabled: true
 
