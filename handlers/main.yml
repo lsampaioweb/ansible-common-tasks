@@ -27,6 +27,12 @@
     state: "restarted"
     enabled: true
 
+- name: "Restart Chrony"
+  ansible.builtin.systemd:
+    name: "chrony"
+    state: "restarted"
+    enabled: true
+
 - name: "HashiCorp Auto Completition"
   become: false
   ansible.builtin.command: "{{ item }}"
