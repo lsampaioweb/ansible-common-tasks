@@ -9,5 +9,7 @@
       - {name: "wholroyd.jinja"}
       - {name: "HashiCorp.terraform"}
       - {name: "4ops.packer"}
-      - {name: "tomoki1207.pdf"}
       - {name: "ms-vscode-remote.remote-ssh"}
+      - {name: "vscjava.vscode-java-pack"}
+      - {name: "redhat.java"}
+      - {name: "tomoki1207.pdf"}
