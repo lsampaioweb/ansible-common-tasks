@@ -20,9 +20,22 @@
 
 - name: "Removing the history of terminal commands"
   ansible.builtin.shell: >-
-    set -o pipefail && \
-    history -cw && \
+    set -o pipefail; \
+    history -cw; \
     echo > ~/.bash_history
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  changed_when: output.rc == 0
+  failed_when: (output.rc != 0)
+
+- name: "Cleaning cloud-init"
+  ansible.builtin.shell: >-
+    set -o pipefail; \
+    sudo cloud-init clean -s -l; \
+    sudo rm -rf /var/lib/cloud/; \
+    sudo rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg; \
+    sudo sync
   args:
     executable: "/usr/bin/bash"
   register: "output"
