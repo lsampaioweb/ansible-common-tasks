@@ -7,23 +7,24 @@
   vars:
     temp_ssh_path: "/etc/ssh"
 
-- name: "Creating the Host OpenSSH keypair"
-  community.crypto.openssh_keypair:
-    path: "{{ host_key_path }}/ssh_host_{{ item.name }}_key"
-    type: "{{ item.name }}"
-    size: "{{ item.size | default(omit) }}"
-    regenerate: "{{ item.regenerate | default('always') }}"
-    comment: "{{ item.name }} key"
-    state: "present"
-  loop:
-    - { name: "ecdsa" }
-    - { name: "ed25519" }
-    - { name: "rsa", size: 2048 }
-  register: "host_output"
-  notify: "Restarting the SSH server"
+# - name: "Creating the Host OpenSSH keypair"
+#   community.crypto.openssh_keypair:
+#     path: "{{ host_key_path }}/ssh_host_{{ item.name }}_key"
+#     type: "{{ item.name }}"
+#     size: "{{ item.size | default(omit) }}"
+#     regenerate: "{{ item.regenerate | default('always') }}"
+#     comment: "{{ item.name }} key"
+#     state: "present"
+#   loop:
+#     - { name: "ecdsa" }
+#     - { name: "ed25519" }
+#     - { name: "rsa", size: 2048 }
+#   register: "host_output"
+#   notify: "Restarting the SSH server"
 
 - name: "Changing the permission so the file can be copied to the target host"
   delegate_to: "{{ delegate_to | default('localhost') }}"
+  run_once: true
   ansible.builtin.file:
     path: "{{ ca_host_key_path }}"
     mode: "0644"
@@ -36,6 +37,7 @@
 
 - name: "Changing the permission back to its original value"
   delegate_to: "{{ delegate_to | default('localhost') }}"
+  run_once: true
   ansible.builtin.file:
     path: "{{ ca_host_key_path }}"
     mode: "0600"
@@ -52,9 +54,11 @@
     principals: "{{ item.principals | default(omit) }}"
     state: "present"
   loop:
-    - { name: "ecdsa" }
-    - { name: "ed25519" }
-    - { name: "rsa"}
+    - { name: "ecdsa", principals: "{{ principals }}" }
+    - { name: "ed25519", principals: "{{ principals }}" }
+    - { name: "rsa", principals: "{{ principals }}" }
+  vars:
+    principals: ["{{ ansible_hostname }}", "{{ ansible_hostname }}.{{ domain }}", "{{ ansible_all_ipv4_addresses | join(', ') }}"]
   register: "cert_output"
   notify: "Restarting the SSH server"
 

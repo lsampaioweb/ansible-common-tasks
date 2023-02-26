@@ -1,10 +1,28 @@
 ---
+- name: "Creating variables"
+  ansible.builtin.set_fact:
+    ssh_path: "{{ temp_ssh_path }}"
+    ca_host_key_path: "{{ temp_ssh_path }}/ca_host_key"
+    ca_host_public_key_path: "{{ temp_ssh_path }}/ca_host_key.pub"
+  vars:
+    temp_ssh_path: "/etc/ssh"
+
 - name: "Creating the Certificate Authority (CA) OpenSSH keypair"
   delegate_to: "{{ delegate_to | default('localhost') }}"
   community.crypto.openssh_keypair:
-    path: "{{ path | default('/etc/ssh/ca_host_key') }}"
+    path: "{{ path | default(ca_host_key_path) }}"
     type: "{{ type | default('ed25519') }}"
     regenerate: "{{ regenerate | default('full_idempotence') }}"
     comment: "{{ comment | default('HomeLab Certificate Authority OpenSSH Keypair') }}"
     state: "{{ state | default('present') }}"
   register: "ca_output"
+
+- name: "Editing the known_hosts file to trust servers with SSH keys signed by the Certificate Authority (CA) OpenSSH keypair"
+  delegate_to: "{{ delegate_to | default('localhost') }}"
+  ansible.builtin.lineinfile:
+    path: "{{ ssh_path }}/ssh_known_hosts"
+    line: "@cert-authority * {{ lookup('ansible.builtin.file', ca_host_public_key_path) }}"
+    create: true
+    mode: "0644"
+  register: "output"
+  notify: "Restarting the SSH server"
