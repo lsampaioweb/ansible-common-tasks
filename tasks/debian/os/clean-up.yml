@@ -21,10 +21,7 @@
 - name: "Cleaning cloud-init"
   ansible.builtin.shell: >-
     set -o pipefail; \
-    sudo cloud-init clean -s -l; \
-    sudo rm -rf /var/lib/cloud/; \
-    sudo rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg; \
-    sudo sync
+    sudo rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
   args:
     executable: "/usr/bin/bash"
   register: "output"
