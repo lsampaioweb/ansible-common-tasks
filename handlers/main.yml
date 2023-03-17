@@ -136,4 +136,6 @@
 
 - name: "Netplan Apply"
   ansible.builtin.command: "netplan apply"
+  async: 45
+  poll: 1
   register: "output"
