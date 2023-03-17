@@ -1,37 +1,44 @@
 ---
 - name: "Update Grub"
   ansible.builtin.command: "update-grub"
+  register: "output"
 
 - name: "Reconfigure Timezone"
   ansible.builtin.command: "dpkg-reconfigure --frontend noninteractive tzdata"
+  register: "output"
 
 - name: "Restart Systemd-Timesyncd"
   ansible.builtin.service:
     name: "systemd-timesyncd"
     state: "restarted"
+  register: "output"
 
 - name: "Restart Systemd-Resolved"
   ansible.builtin.service:
     name: "systemd-resolved"
     state: "restarted"
+  register: "output"
 
 - name: "Restart xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "Restart Bind9"
   ansible.builtin.systemd:
     name: "bind9"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "Restart Chrony"
   ansible.builtin.systemd:
     name: "chrony"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "HashiCorp Auto Completition"
   become: false
@@ -54,6 +61,7 @@
     pre_reboot_delay: 0
     post_reboot_delay: 10
     test_command: "whoami"
+  register: "output"
 
 - name: "Restart network"
   ansible.builtin.service:
@@ -61,6 +69,7 @@
     state: "restarted"
   poll: 0
   async: 10
+  register: "output"
 
 - name: "Reload network"
   ansible.builtin.command: "ifreload -a"
@@ -69,6 +78,7 @@
 - name: "Wait for the network device to reload"
   ansible.builtin.wait_for_connection:
     delay: 1
+  register: "output"
 
 - name: "Update CA Certificates"
   ansible.builtin.command: "update-ca-certificates"
@@ -83,12 +93,14 @@
     name: "fail2ban"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "Restarting the SSH server"
   ansible.builtin.service:
     name: "ssh"
     state: "restarted"
     enabled: true
+  register: "output"
   failed_when: false
 
 - name: "Restarting and Enabling docker"
@@ -96,6 +108,7 @@
     name: "docker"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "Refresh ~/.bashrc"
   become: false
@@ -112,9 +125,15 @@
     name: "keepalived"
     state: "restarted"
     enabled: true
+  register: "output"
 
 - name: "Restart qemu-guest-agent"
   ansible.builtin.service:
     name: "qemu-guest-agent"
     state: "started"
     enabled: true
+  register: "output"
+
+- name: "Netplan Apply"
+  ansible.builtin.command: "netplan apply"
+  register: "output"
