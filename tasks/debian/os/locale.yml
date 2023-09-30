@@ -1,0 +1,5 @@
+---
+- name: "Setting up the locale"
+  community.general.locale_gen:
+    name: "{{ name | default('en_US.UTF-8') }}"
+    state: "{{ state | default(omit) }}"
