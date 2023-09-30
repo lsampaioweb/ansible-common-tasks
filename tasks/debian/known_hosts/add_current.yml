@@ -1,5 +1,6 @@
 ---
 - name: "Ensure the .ssh directory exists"
+  run_once: true
   delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
   ansible.builtin.file:
@@ -10,11 +11,13 @@
 - name: "Retrieving the fingerprint of the host"
   delegate_to: "{{ delegate_to | default('localhost') }}"
   ansible.builtin.set_fact:
-    fingerprints: "{{ {'name': host_ip, 'key': host_key} }}"
+    fingerprints: "{{ {'name': host_name, 'key': host_key} }}"
   vars:
-    ssh_key_type: "ecdsa"
-    host_ip: "{{ ansible_host }}"
-    host_key: "{{ lookup('pipe', 'ssh-keyscan -t ' + ssh_key_type + ' ' + host_ip, errors='ignore') }}"
+    # ssh_key_type: "rsa"
+    # ssh_key_type: "ecdsa"
+    ssh_key_type: "ed25519"
+    host_name: "{{ inventory_hostname }}"
+    host_key: "{{ lookup('pipe', 'ssh-keyscan -t ' + ssh_key_type + ' ' + host_name, errors='ignore') }}"
 
 - name: "Printing the fingerprint (name and key)"
   ansible.builtin.debug:
