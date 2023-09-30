@@ -17,8 +17,9 @@
 
 - name: "Adding repository into sources list"
   ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
-    https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    repo: >-
+      deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.asc]
+      https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
     filename: "docker"
     state: "present"
 
@@ -35,7 +36,7 @@
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"
 
-- name: "Adding the {{ ansible_user }} user into the 'docker' group"
+- name: "Adding the user into the 'docker' group - {{ ansible_user }}"
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: "docker"

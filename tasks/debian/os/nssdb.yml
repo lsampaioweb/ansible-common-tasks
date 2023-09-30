@@ -1,5 +1,5 @@
 ---
-- name: "Checking if the folder {{ nssdb_path }} exists"
+- name: "Checking if the folder exists - {{ nssdb_path }}"
   ansible.builtin.stat:
     path: "{{ nssdb_path }}"
   register: "nssdb_stat"
@@ -13,6 +13,8 @@
 
 - name: "Initializing an empty database at {{ nssdb_path }}"
   ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
+  register: "output"
+  changed_when: output.rc == 0
   when: not nssdb_stat.stat.exists
 
 - name: "Installing the certificates at {{ nssdb_path }}"

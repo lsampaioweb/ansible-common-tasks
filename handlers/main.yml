@@ -2,10 +2,12 @@
 - name: "Update Grub"
   ansible.builtin.command: "update-grub"
   register: "output"
+  changed_when: output.rc == 0
 
 - name: "Reconfigure Timezone"
   ansible.builtin.command: "dpkg-reconfigure --frontend noninteractive tzdata"
   register: "output"
+  changed_when: output.rc == 0
 
 - name: "Restart Systemd-Timesyncd"
   ansible.builtin.service:
@@ -74,6 +76,7 @@
 - name: "Reload network"
   ansible.builtin.command: "ifreload -a"
   register: "output"
+  changed_when: output.rc == 0
 
 - name: "Wait for the network device to reload"
   ansible.builtin.wait_for_connection:
@@ -83,10 +86,12 @@
 - name: "Update CA Certificates"
   ansible.builtin.command: "update-ca-certificates"
   register: "output"
+  changed_when: output.rc == 0
 
 - name: "Update CA Certificates FreeBSD"
   ansible.builtin.command: "certctl rehash"
   register: "output"
+  changed_when: output.rc == 0
 
 - name: "Restarting and Enabling fail2ban"
   ansible.builtin.service:
@@ -139,3 +144,4 @@
   poll: 0
   async: 10
   register: "output"
+  changed_when: output.rc == 0

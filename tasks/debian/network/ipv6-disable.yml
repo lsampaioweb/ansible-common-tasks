@@ -31,4 +31,5 @@
     - output.changed
     - ansible_facts.services["NetworkManager.service"] is defined and ansible_facts.services["NetworkManager.service"]['status'] == 'enabled'
   register: "output"
+  changed_when: output.rc == 0
   notify: "Restart network"

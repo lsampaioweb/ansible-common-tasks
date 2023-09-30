@@ -34,6 +34,6 @@ Repository with common Ansible tasks.
 
 1. Add e retrieve passwords from the secret manager.
 
-# Created by: 
+# Created by:
 
 1. Luciano Sampaio.
