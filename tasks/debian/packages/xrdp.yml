@@ -4,7 +4,7 @@
     name: "xrdp"
     groups: "ssl-cert"
     append: true
-  notify: "Restart xrdp"
+  notify: "Restart Xrdp"
 
 - name: "Editing the startwm.sh file to avoid the Black Screen problem"
   ansible.builtin.blockinfile:
@@ -18,11 +18,11 @@
       Unset DBUS_SESSION_BUS_ADDRESS
       Unset XDG_RUNTIME_DIR
   register: "output"
-  notify: "Restart xrdp"
+  notify: "Restart Xrdp"
 
 - name: "Copying allow color managed device file to the target host"
   ansible.builtin.copy:
     src: "45-allow-colord.pkla"
     dest: "/etc/polkit-1/localauthority/50-local.d/"
     mode: "preserve"
-  notify: "Restart xrdp"
+  notify: "Restart Xrdp"

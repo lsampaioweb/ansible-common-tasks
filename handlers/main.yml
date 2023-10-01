@@ -9,19 +9,25 @@
   register: "output"
   changed_when: output.rc == 0
 
-- name: "Restart Systemd-Timesyncd"
-  ansible.builtin.service:
+- name: "Restart Timesyncd"
+  ansible.builtin.systemd:
     name: "systemd-timesyncd"
     state: "restarted"
   register: "output"
 
+- name: "Restart Chronyd"
+  ansible.builtin.systemd:
+    name: "chronyd"
+    state: "restarted"
+  register: "output"
+
 - name: "Restart Systemd-Resolved"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "systemd-resolved"
     state: "restarted"
   register: "output"
 
-- name: "Restart xrdp"
+- name: "Restart Xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
@@ -66,7 +72,7 @@
   register: "output"
 
 - name: "Restart network"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "networking"
     state: "restarted"
   poll: 0
@@ -94,14 +100,14 @@
   changed_when: output.rc == 0
 
 - name: "Restarting and Enabling fail2ban"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "fail2ban"
     state: "restarted"
     enabled: true
   register: "output"
 
 - name: "Restarting the SSH server"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "ssh"
     state: "restarted"
     enabled: true
@@ -109,7 +115,7 @@
   failed_when: false
 
 - name: "Restarting and Enabling docker"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "docker"
     state: "restarted"
     enabled: true
@@ -133,7 +139,7 @@
   register: "output"
 
 - name: "Restart qemu-guest-agent"
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: "qemu-guest-agent"
     state: "started"
     enabled: true

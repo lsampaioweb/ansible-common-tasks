@@ -1,9 +1,21 @@
 ---
-- name: "Setting up Brazilian NTP servers"
+- name: "Setting up NTP Servers - Timesyncd"
   ansible.builtin.lineinfile:
     path: "/etc/systemd/timesyncd.conf"
     regexp: "NTP="
     line: "NTP={{ ntp_servers }}"
     state: "present"
   register: "output"
-  notify: "Restart Systemd-Timesyncd"
+  when: (ntp_service is not defined or ntp_service == "timesyncd")
+  notify: "Restart Timesyncd"
+
+- name: "Setting up NTP Servers - Chronyd"
+  ansible.builtin.lineinfile:
+    path: "/etc/chrony/chrony.conf"
+    insertafter: "# Use Debian"
+    line: "{{ item }}"
+    state: "present"
+  register: "output"
+  loop: "{{ ntp_servers }}"
+  when: (ntp_service is defined and ntp_service == "chrony")
+  notify: "Restart Chronyd"
