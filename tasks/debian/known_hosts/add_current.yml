@@ -11,13 +11,13 @@
 - name: "Retrieving the fingerprint of the host"
   delegate_to: "{{ delegate_to | default('localhost') }}"
   ansible.builtin.set_fact:
-    fingerprints: "{{ {'name': host_name, 'key': host_key} }}"
+    fingerprints: "{{ {'name': _host_name, 'key': _host_key} }}"
   vars:
     # ssh_key_type: "rsa"
     # ssh_key_type: "ecdsa"
-    ssh_key_type: "ed25519"
-    host_name: "{{ inventory_hostname }}"
-    host_key: "{{ lookup('pipe', 'ssh-keyscan -t ' + ssh_key_type + ' ' + host_name, errors='ignore') }}"
+    _ssh_key_type: "{{ ssh_key_type | default('ed25519') }}"
+    _host_name: "{{ host_name | default(inventory_hostname) }}"
+    _host_key: "{{ host_key | default(lookup('pipe', 'ssh-keyscan -t ' + _ssh_key_type + ' ' + _host_name, errors='ignore')) }}"
 
 - name: "Printing the fingerprint (name and key)"
   ansible.builtin.debug:
