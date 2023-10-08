@@ -3,7 +3,7 @@
   ansible.builtin.lineinfile:
     path: "/etc/systemd/timesyncd.conf"
     regexp: "NTP="
-    line: "NTP={{ ntp_servers }}"
+    line: "NTP={{ (ntp_servers | default([])) | join(' ') }}"
     state: "present"
   register: "output"
   when: (ntp_service is not defined or ntp_service == "timesyncd")
@@ -16,6 +16,6 @@
     line: "{{ item }}"
     state: "present"
   register: "output"
-  loop: "{{ ntp_servers }}"
+  loop: "{{ ntp_servers | default([]) }}"
   when: (ntp_service is defined and ntp_service == "chrony")
   notify: "Restart Chronyd"
