@@ -1,15 +1,22 @@
 ---
+- name: "Adding Microsoft signing key"
+  ansible.builtin.get_url:
+    url: "https://packages.microsoft.com/keys/microsoft.asc"
+    dest: "/etc/apt/trusted.gpg.d/microsoft.asc"
+    mode: "0644"
+
+- name: "Adding repository into sources list"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/microsoft.asc] https://packages.microsoft.com/repos/code stable main"
+    filename: "vscode"
+    state: "present"
+
+- name: "Installing apt packages"
+  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  vars:
+    packages:
+      - {name: "code", update_cache: true}
+
 - name: "Managing vscode extentions"
   become: false
   ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/vscode-extention.yml"
-  vars:
-    extentions:
-      - {name: "redhat.ansible"}
-      - {name: "redhat.vscode-yaml"}
-      - {name: "wholroyd.jinja"}
-      - {name: "HashiCorp.terraform"}
-      - {name: "4ops.packer"}
-      - {name: "ms-vscode-remote.remote-ssh"}
-      - {name: "vscjava.vscode-java-pack"}
-      - {name: "redhat.java"}
-      - {name: "tomoki1207.pdf"}
