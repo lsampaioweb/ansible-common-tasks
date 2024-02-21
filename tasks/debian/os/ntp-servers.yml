@@ -13,8 +13,8 @@
   ansible.builtin.lineinfile:
     path: "/etc/chrony/chrony.conf"
     insertafter: "# Use Debian"
-    line: "{{ item }}"
-    state: "present"
+    line: "{{ item.line }}"
+    state: "{{ item.state }}"
   register: "output"
   loop: "{{ ntp_servers | default([]) }}"
   when: (ntp_service is defined and ntp_service == "chrony")

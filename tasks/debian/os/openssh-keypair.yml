@@ -62,11 +62,11 @@
 
 - name: "Deleting the Certificate Authority (CA) signing key from the target host"
   ansible.builtin.file:
-    path: "{{ item.path }}"
+    path: "{{ item }}"
     state: "absent"
   loop:
-    - {path: "{{ ca_host_private_key_path }}"}
-    - {path: "{{ ca_host_public_key_path }}"}
+    - "{{ ca_host_private_key_path }}"
+    - "{{ ca_host_public_key_path }}"
 
 - name: "Copying default ssh config file to the target host"
   ansible.builtin.copy:
