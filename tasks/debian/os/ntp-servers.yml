@@ -1,12 +1,12 @@
 ---
 - name: "Setting up NTP Servers - Timesyncd"
+  when: (ntp_service is not defined or ntp_service == "timesyncd")
   ansible.builtin.lineinfile:
     path: "/etc/systemd/timesyncd.conf"
     regexp: "NTP="
     line: "NTP={{ (ntp_servers | default([])) | join(' ') }}"
     state: "present"
   register: "output"
-  when: (ntp_service is not defined or ntp_service == "timesyncd")
   notify: "Restart Timesyncd"
 
 - name: "Setting up NTP Servers - Chronyd"
