@@ -51,15 +51,6 @@
   register: "cert_output"
   notify: "Restarting the SSH server"
 
-- name: "Editing the known_hosts file to trust servers with SSH keys signed by the Certificate Authority (CA) OpenSSH keypair"
-  ansible.builtin.lineinfile:
-    path: "{{ ssh_path }}/ssh_known_hosts"
-    line: "@cert-authority * {{ lookup('ansible.builtin.file', ca_host_public_key_path) }}"
-    create: true
-    mode: "0644"
-  register: "output"
-  notify: "Restarting the SSH server"
-
 - name: "Deleting the Certificate Authority (CA) signing key from the target host"
   ansible.builtin.file:
     path: "{{ item }}"
