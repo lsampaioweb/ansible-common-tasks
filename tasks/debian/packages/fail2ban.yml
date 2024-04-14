@@ -1,8 +1,10 @@
 ---
-- name: "Copying the ssh jail config file"
+- name: "Copying the jail config file to the Fail2ban folder"
   ansible.builtin.copy:
-    src: "ssh.conf"
-    dest: "/etc/fail2ban/jail.d/ssh.conf"
-    mode: "640"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('640') }}"
+  loop: "{{ rules | default([]) }}"
+  register: "output"
   notify:
     - "Restarting and Enabling fail2ban"

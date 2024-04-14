@@ -16,3 +16,7 @@
   vars:
     packages:
       - {name: "google-chrome-stable", update_cache: true}
+
+- name: "Adding our self signed certificate authority to the Google Chrome trust database"
+  become: false
+  ansible.builtin.import_tasks: "roles/common/tasks/debian/os/nssdb.yml"
