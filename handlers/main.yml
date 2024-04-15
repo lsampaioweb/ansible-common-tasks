@@ -75,8 +75,8 @@
   ansible.builtin.systemd:
     name: "networking"
     state: "restarted"
-  poll: 0
-  async: 10
+  poll: 1
+  async: 60
   register: "output"
 
 - name: "Reload network"
@@ -147,7 +147,6 @@
 
 - name: "Netplan Generate"
   ansible.builtin.command: "netplan generate"
-  poll: 0
-  async: 10
+  poll: 1
+  async: 60
   register: "output"
-  changed_when: output.rc == 0
