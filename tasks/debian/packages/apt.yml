@@ -27,4 +27,4 @@
   register: "output"
   failed_when: false
   changed_when: output.rc == 0
-  when: upgrade is defined and upgrade | bool
+  when: upgrade is defined
