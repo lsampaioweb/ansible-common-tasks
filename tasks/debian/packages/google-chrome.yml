@@ -20,3 +20,4 @@
 - name: "Adding our self signed certificate authority to the Google Chrome trust database"
   become: false
   ansible.builtin.import_tasks: "roles/common/tasks/debian/os/nssdb.yml"
+  when: nssdb_path is defined

@@ -2,6 +2,7 @@
 - name: "Setting the name of the server"
   ansible.builtin.hostname:
     name: "{{ hostname }}"
+  when: (hostname is defined)
 
 - name: "Setting the localhost name of the server"
   ansible.builtin.replace:
@@ -9,3 +10,4 @@
     after: "127.0.0.1 localhost"
     regexp: "(127.0.1.1)(.*)"
     replace: "\\1 {{ hostname }}"
+  when: (hostname is defined)
