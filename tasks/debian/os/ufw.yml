@@ -16,5 +16,5 @@
     logging: "{{ item.logging | default(omit) }}"
     comment: "{{ item.comment | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
-  loop: "{{ rules }}"
+  loop: "{{ rules | default([]) }}"
   register: "output"

@@ -13,7 +13,7 @@
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: "absent"
-  loop: "{{ temp_files_to_delete.files }}"
+  loop: "{{ temp_files_to_delete.files | default([]) }}"
   loop_control:
     index_var: "index"
     label: "{{ index }} - {{ item.path }}"
@@ -36,7 +36,7 @@
     executable: "/bin/sh"
   register: "output"
   changed_when: output.rc == 0
-  loop: "{{ temp_files_to_truncate.files }}"
+  loop: "{{ temp_files_to_truncate.files | default([]) }}"
   loop_control:
     index_var: "index"
     label: "{{ index }} - {{ item.path }}"

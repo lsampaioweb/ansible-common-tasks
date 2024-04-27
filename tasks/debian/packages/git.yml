@@ -7,5 +7,5 @@
     name: "{{ item.name | default(omit) }}"
     value: "{{ item.value | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
-  loop: "{{ config }}"
+  loop: "{{ config | default([]) }}"
   register: "output"

@@ -8,5 +8,5 @@
   ansible.builtin.pip:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
-  loop: "{{ packages }}"
+  loop: "{{ packages | default([]) }}"
   register: "output"

@@ -5,5 +5,5 @@
     classic: "{{ item.classic | default(omit) }}"
     channel: "{{ item.channel | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
-  loop: "{{ packages }}"
+  loop: "{{ packages | default([]) }}"
   register: "output"
