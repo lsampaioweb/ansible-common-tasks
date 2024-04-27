@@ -23,7 +23,7 @@
     -t '{{ item.trust }}'
     -n '{{ item.name }}'
     -i '{{ item.path }}'
-  loop: '{{ nssdb_certificates }}'
+  loop: '{{ nssdb_certificates | default([]) }}'
   register: "output"
   changed_when: output.rc == 0
   failed_when: (output.rc != 0)

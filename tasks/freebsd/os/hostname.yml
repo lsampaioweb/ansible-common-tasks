@@ -2,6 +2,7 @@
 - name: "Setting the name of the server"
   ansible.builtin.hostname:
     name: "{{ hostname }}"
+  when: (hostname is defined)
 
 - name: "Setting the hostname in the /etc/rc.conf"
   ansible.builtin.lineinfile:
@@ -9,3 +10,4 @@
     regexp: "hostname="
     line: "hostname={{ hostname }}"
     state: "present"
+  when: (hostname is defined)
