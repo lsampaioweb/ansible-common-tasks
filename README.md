@@ -3,7 +3,7 @@ Repository with common Ansible tasks.
 
 # Tasks:
 
-## Debian
+### Debian
 
 ### 1. Known hosts
 
@@ -34,6 +34,7 @@ Repository with common Ansible tasks.
 
 1. Add e retrieve passwords from the secret manager.
 
-# Created by:
+#
+### Created by:
 
 1. Luciano Sampaio.
