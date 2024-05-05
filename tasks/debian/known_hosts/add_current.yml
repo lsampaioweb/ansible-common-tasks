@@ -22,7 +22,7 @@
 - name: "Printing the fingerprint (name and key)"
   ansible.builtin.debug:
     msg: "{{ fingerprints }}"
-  when: debug | bool
+  tags: "debug"
 
 - name: "Ensure the fingerprint is present in the known_hosts file"
   ansible.builtin.include_tasks: "{{ path_debian_known_hosts_add }}"
