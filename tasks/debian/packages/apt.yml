@@ -1,4 +1,10 @@
 ---
+- name: "Ensure no other package operations are running"
+  ansible.builtin.shell: |
+    killall -q apt-get dpkg || true
+    while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done
+  changed_when: false
+
 - name: "Upgrading the packages"
   ansible.builtin.apt:
     update_cache: "{{ update_cache | default(true) }}"
