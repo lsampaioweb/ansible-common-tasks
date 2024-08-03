@@ -1,9 +1,24 @@
 ---
+- name: "Waiting for cloud-init / user-data to finish"
+  ansible.builtin.command:
+    cmd: "cloud-init status --wait"
+  register: "cloud_init_status"
+  changed_when: false
+  failed_when: "'status: done' not in cloud_init_status.stdout"
+
 - name: "Ensure no other package operations are running"
   ansible.builtin.shell: |
     killall -q apt-get dpkg || true
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done
   changed_when: false
+
+- name: "Removing apt lock files"
+  ansible.builtin.file:
+    state: "absent"
+    path: "{{ item }}"
+  loop:
+    - "/var/lib/dpkg/lock"
+    - "/var/lib/dpkg/lock-frontend"
 
 - name: "Upgrading the packages"
   ansible.builtin.apt:
