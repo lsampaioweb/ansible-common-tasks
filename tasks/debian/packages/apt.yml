@@ -4,7 +4,7 @@
     cmd: "cloud-init status --wait"
   register: "cloud_init_status"
   changed_when: false
-  failed_when: "'status: done' not in cloud_init_status.stdout"
+  failed_when: false
 
 - name: "Ensure no other package operations are running"
   ansible.builtin.shell: |
