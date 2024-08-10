@@ -4,7 +4,15 @@
     name: "pipx"
     state: "present"
 
+- name: "Ensure pipx path is set"
+  become: false
+  ansible.builtin.command: "pipx ensurepath"
+  environment:
+    PATH: "{{ ansible_env.PATH }}:~/.local/bin"
+  changed_when: false
+
 - name: "Python packages"
+  become: false
   community.general.pipx:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
