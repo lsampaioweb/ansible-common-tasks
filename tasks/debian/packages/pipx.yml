@@ -16,5 +16,13 @@
   community.general.pipx:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
+    install_apps: "{{ item.install_apps | default(omit) }}"
+    install_deps: "{{ item.install_deps | default(omit) }}"
+    source: "{{ item.source | default(omit) }}"
+    force: "{{ item.force | default(omit) }}"
+    include_injected: "{{ item.include_injected | default(omit) }}"
+    index_url: "{{ item.index_url | default(omit) }}"
+    python: "{{ item.python | default(omit) }}"
+    system_site_packages: "{{ item.system_site_packages | default(omit) }}"
   loop: "{{ packages | default([]) }}"
   register: "output"
