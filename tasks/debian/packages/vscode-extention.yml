@@ -1,5 +1,6 @@
 ---
 - name: "Managing vscode extentions"
+  become: false
   ansible.builtin.command: "code {{ command }} {{ item.name }}"
   vars:
     command: "{{ (item.state is not defined or item.state == 'install') | ternary('--install-extension', '--uninstall-extension') }}"

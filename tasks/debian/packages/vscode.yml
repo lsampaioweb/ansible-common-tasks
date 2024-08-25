@@ -16,7 +16,3 @@
   vars:
     packages:
       - {name: "code", update_cache: true}
-
-- name: "Managing vscode extentions"
-  become: false
-  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/vscode-extention.yml"
