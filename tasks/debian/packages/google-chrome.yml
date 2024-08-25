@@ -16,3 +16,9 @@
   vars:
     packages:
       - {name: "google-chrome-stable", update_cache: true}
+
+- name: "Removing duplicated Google Chrome repository entry"
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main"
+    filename: "google-chrome"
+    state: "absent"
