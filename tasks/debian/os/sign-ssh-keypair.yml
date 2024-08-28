@@ -1,0 +1,56 @@
+---
+- name: "Creating variables"
+  ansible.builtin.set_fact:
+    ca_host_private_key_path: "{{ ca_ssh_path }}/ca_host_key"
+    ssh_path: "/etc/ssh"
+    tmp_ssh_path: "/tmp/{{ inventory_hostname }}"
+    ssh_key_types:
+      - "rsa"
+      - "ecdsa"
+      - "ed25519"
+  vars:
+    ca_ssh_path: "/opt/certificates/ca.lan.homelab"
+
+- name: "Fetching the SSH public keys from host"
+  ansible.builtin.fetch:
+    src: "{{ ssh_path }}/ssh_host_{{ item }}_key.pub"
+    dest: "{{ tmp_ssh_path }}/"
+    flat: true
+  loop: "{{ ssh_key_types }}"
+
+- name: "Signing the Host OpenSSH keypair with the CA key"
+  delegate_to: "{{ groups['ssh_signer'] | first }}"
+  community.crypto.openssh_cert:
+    type: "host"
+    signing_key: "{{ ca_host_private_key_path }}"
+    public_key: "{{ tmp_ssh_path }}/ssh_host_{{ item }}_key.pub"
+    path: "{{ tmp_ssh_path }}/ssh_host_{{ item }}_key-cert.pub"
+    regenerate: "{{ item.regenerate | default('full_idempotence') }}"
+    valid_from: "{{ item.valid_from | default('always') }}"
+    valid_to: "{{ item.valid_to | default('forever') }}"
+    principals: "{{ principals | default(omit) }}"
+    state: "present"
+  loop: "{{ ssh_key_types }}"
+  vars:
+    principals: ["{{ ansible_hostname }}", "{{ ansible_hostname }}.{{ domain }}"]
+
+- name: "Copying the signed SSH keys back to host"
+  ansible.builtin.copy:
+    src: "{{ tmp_ssh_path }}/ssh_host_{{ item }}_key-cert.pub"
+    dest: "{{ ssh_path }}/"
+    mode: "preserve"
+  loop: "{{ ssh_key_types }}"
+  notify: "Restarting the SSH server"
+
+- name: "Copying default ssh config file to the target host"
+  ansible.builtin.copy:
+    src: "ssh.conf"
+    dest: "{{ ssh_path }}/sshd_config.d/"
+    mode: "preserve"
+  notify: "Restarting the SSH server"
+
+# - name: "Deleting local signed key files"
+#   delegate_to: "{{ groups['ssh_signer'] | first }}"
+#   ansible.builtin.file:
+#     path: "{{ tmp_ssh_path }}"
+#     state: "absent"
