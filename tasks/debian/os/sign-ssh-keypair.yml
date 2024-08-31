@@ -32,7 +32,7 @@
     state: "present"
   loop: "{{ ssh_key_types }}"
   vars:
-    principals: ["{{ ansible_hostname }}", "{{ ansible_hostname }}.{{ domain }}"]
+    principals: ["{{ hostname }}", "{{ hostname }}.{{ domain }}"]
 
 - name: "Copying the signed SSH keys back to host"
   ansible.builtin.copy:
