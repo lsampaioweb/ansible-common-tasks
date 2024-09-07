@@ -7,8 +7,9 @@
 - name: "Ensure pipx path is set"
   become: false
   ansible.builtin.command: "pipx ensurepath"
-  environment:
-    PATH: "{{ ansible_env.PATH }}:~/.local/bin"
+  when: pipx_path not in ansible_env.PATH
+  vars:
+    pipx_path: "{{ '~/.local/bin' | expanduser }}"
   changed_when: false
 
 - name: "Python packages"
