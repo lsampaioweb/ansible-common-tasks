@@ -22,6 +22,7 @@
     source: "{{ item.source | default(omit) }}"
     force: "{{ item.force | default(omit) }}"
     include_injected: "{{ item.include_injected | default(omit) }}"
+    inject_packages: "{{ item.inject_packages | default(omit) }}"
     index_url: "{{ item.index_url | default(omit) }}"
     python: "{{ item.python | default(omit) }}"
     system_site_packages: "{{ item.system_site_packages | default(omit) }}"
