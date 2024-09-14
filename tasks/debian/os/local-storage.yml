@@ -1,0 +1,67 @@
+---
+- name: "Getting existing disks"
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      lsblk -nr | grep disk | cut -d' ' -f1
+    executable: "/bin/bash"
+  register: "disks_output"
+  changed_when: false
+
+- name: "Creating partition on new disks"
+  community.general.parted:
+    device: "/dev/{{ item }}"
+    number: 1
+    label: "gpt"
+    flags: ["lvm"]
+    state: "present"
+  loop: "{{ disks_output.stdout_lines }}"
+  register: "parted_output"
+
+- name: "Getting existing partitions"
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      lsblk -nr | grep part | cut -d' ' -f1
+    executable: "/bin/bash"
+  register: "partitions_output"
+  changed_when: false
+
+- name: "Filtering out partitions to ignore"
+  ansible.builtin.set_fact:
+    filtered_partitions: "{{ partitions_output.stdout_lines | reject('match', '^sda[1-2]') | list }}"
+
+- name: "Concatenating each partition with the '/dev/???' prefix"
+  ansible.builtin.set_fact:
+    partition_list: "{{ filtered_partitions | map('regex_replace', '^', '/dev/') | list }}"
+
+- name: "Extending volume groups"
+  community.general.lvg:
+    vg: "{{ item.name }}"
+    pvs: "{{ partition_list | select('match', '[' + item.disks | join('|') + ']') | list | join(',') }}"
+    pvresize: true
+  loop: "{{ vgs }}"
+  register: "lvg_output"
+
+- name: "Creating logical volumes"
+  community.general.lvol:
+    vg: "{{ item.0.name }}"     # Volume group name
+    lv: "{{ item.1.name }}"     # Logical volume name
+    size: "{{ item.1.size }}"   # Size of the logical volume
+    resizefs: true
+    shrink: false
+    state: "present"
+  loop: "{{ query('subelements', vgs, 'lvm') }}"  # Flattened list of volume groups and their logical volumes.
+  loop_control:
+    label: "{{ item.1.name }}"  # Label for the logical volume
+  register: "lvol_output"
+
+- name: "Creating filesystems on logical volumes"
+  community.general.filesystem:
+    dev: "/dev/{{ item.0.name }}/{{ item.1.name }}"
+    fstype: "{{ item.1.filesystem_type }}"
+    state: "present"
+  loop: "{{ query('subelements', vgs, 'lvm') }}"  # Flattened list of volume groups and their logical volumes.
+  loop_control:
+    label: "{{ item.1.name }}"  # Label for the logical volume
+  register: "filesystem_output"
