@@ -2,6 +2,8 @@
 - name: "Installing Docker dependencies"
   ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
+    update_cache: true
+    upgrade: "safe"
     packages:
       - {name: "apt-transport-https"}
       - {name: "ca-certificates"}
@@ -27,7 +29,7 @@
   ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
     packages:
-      - {name: "docker-ce", update_cache: true, install_recommends: true}
+      - {name: "docker-ce", install_recommends: true}
       - {name: "docker-compose"}
       - {name: "docker-registry"}
       - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
