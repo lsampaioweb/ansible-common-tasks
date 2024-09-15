@@ -33,9 +33,8 @@
       - {name: "docker-ce-cli"}
       - {name: "containerd.io"}
       - {name: "docker-buildx-plugin"}
-      - {name: "docker-compose"}
+      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}  # Newer Compose version
       - {name: "docker-registry"}
-      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
   notify: "Restarting and Enabling docker"
 
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
