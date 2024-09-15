@@ -30,6 +30,9 @@
   vars:
     packages:
       - {name: "docker-ce", install_recommends: true}
+      - {name: "docker-ce-cli"}
+      - {name: "containerd.io"}
+      - {name: "docker-buildx-plugin"}
       - {name: "docker-compose"}
       - {name: "docker-registry"}
       - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
