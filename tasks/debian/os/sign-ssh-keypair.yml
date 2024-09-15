@@ -41,16 +41,3 @@
     mode: "preserve"
   loop: "{{ ssh_key_types }}"
   notify: "Restarting the SSH server"
-
-- name: "Copying default ssh config file to the target host"
-  ansible.builtin.copy:
-    src: "ssh.conf"
-    dest: "{{ ssh_path }}/sshd_config.d/"
-    mode: "preserve"
-  notify: "Restarting the SSH server"
-
-# - name: "Deleting local signed key files"
-#   delegate_to: "{{ groups['ssh_signer'] | first }}"
-#   ansible.builtin.file:
-#     path: "{{ tmp_ssh_path }}"
-#     state: "absent"
