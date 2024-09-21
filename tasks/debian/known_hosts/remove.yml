@@ -1,5 +1,7 @@
 ---
 - name: "Removing the fingerprint from the know_hosts file"
+  delegate_to: "{{ delegate_to_host | default(omit) }}"
+  become: "{{ become | default(false) }}"
   ansible.builtin.known_hosts:
     name: "{{ host.name }}"
     key: "{{ host.key | default(omit) }}"
