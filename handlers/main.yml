@@ -145,8 +145,8 @@
     enabled: true
   register: "output"
 
-- name: "Netplan Generate"
-  ansible.builtin.command: "netplan generate"
+- name: "Netplan Apply"
+  ansible.builtin.command: "netplan apply"
   poll: 1
   async: 60
   register: "output"
