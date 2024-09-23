@@ -22,9 +22,9 @@
 
 - name: "Upgrading the packages"
   ansible.builtin.apt:
-    update_cache: "{{ update_cache | default(true) }}"
-    upgrade: "{{ upgrade | default('safe') }}"
-  when: update_cache is defined or upgrade is defined
+    update_cache: "{{ update_cache | default(omit) }}"
+    upgrade: "{{ upgrade | default(omit) }}"
+  when: (update_cache | default(false)) or (upgrade | default('false')) != 'false'
 
 - name: "Apt packages"
   ansible.builtin.apt:
@@ -48,4 +48,10 @@
   register: "output"
   failed_when: false
   changed_when: output.rc == 0
-  when: upgrade is defined
+  when: upgrade is defined and upgrade | bool
+
+- name: "Removing dependencies that are no longer required and unnecessary packages from the cache"
+  ansible.builtin.apt:
+    autoclean: "{{ autoclean | default(omit) }}"
+    autoremove: "{{ autoremove | default(omit) }}"
+  when: (autoclean | default(false)) or (autoremove | default(false))
