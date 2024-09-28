@@ -1,0 +1,35 @@
+---
+- name: "Setting DNS entry configurations in the database"
+  fortinet.fortios.fortios_system_dns_database:
+    vdom: "{{ vdom | default(omit, true) }}"
+    member_path: "{{ member_path | default('dns_entry:id', true) }}"
+    member_state: "{{ member_state | default('present', true) }}"
+    state: "{{ desired_settings.state }}"
+    system_dns_database:
+      name: "{{ desired_settings.name }}"
+      dns_entry: "{{ desired_settings.dns_entry }}"
+  ignore_errors: true
+  register: "output"
+
+- name: "Debugging output from DNS entry"
+  ansible.builtin.debug:
+    msg: "{{ output }}"
+  tags: ["never", "debug"]
+
+- name: "Initializing fail_conditions list"
+  ansible.builtin.set_fact:
+    fail_conditions: []
+
+- name: "Collecting conditions for failing (not success and not 404)"
+  ansible.builtin.set_fact:
+    fail_conditions: "{{ fail_conditions + [result.status != 'success' and result.http_status != 404] }}"
+  loop: "{{ output.meta | default([]) }}"
+  loop_control:
+    loop_var: "result"
+    label: "{{ result.object_path }}"
+  when: output.meta is defined
+
+- name: "Checking if any failures occurred"
+  ansible.builtin.fail:
+    msg: "Error found in DNS configuration"
+  when: fail_conditions | select('equalto', true) | list | length > 0
