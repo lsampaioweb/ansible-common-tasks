@@ -38,9 +38,11 @@
 - name: "Extending volume groups"
   community.general.lvg:
     vg: "{{ item.name }}"
-    pvs: "{{ partition_list | select('match', '[' + item.disks | join('|') + ']') | list | join(',') }}"
+    pvs: "{{ partition_list | select('match', '^(' + item.disks | join('|') + ')$') | list | join(',') }}"
     pvresize: true
   loop: "{{ vgs }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "lvg_output"
 
 - name: "Creating logical volumes"
@@ -63,5 +65,27 @@
     state: "present"
   loop: "{{ query('subelements', vgs, 'lvm') }}"  # Flattened list of volume groups and their logical volumes.
   loop_control:
-    label: "{{ item.1.name }}"  # Label for the logical volume
+    label: "/dev/{{ item.0.name }}/{{ item.1.name }}"  # Label for the logical volume
   register: "filesystem_output"
+
+- name: "Creating the directories that will be mounted"
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: "directory"
+    owner: "{{ item.owner | default(omit, true) }}"
+    group: "{{ item.group | default(omit, true) }}"
+    mode: "{{ item.mode | default('0755', true) }}"
+  loop: "{{ mounts | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: "Mounting the logical volume"
+  ansible.builtin.mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: "{{ item.fstype | default('ext4', true) }}"
+    opts: "{{ item.opts | default('defaults', true) }}"
+    state: "{{ item.state | default('mounted', true) }}"
+  loop: "{{ mounts | default([]) }}"
+  loop_control:
+    label: "{{ item.path }}"
