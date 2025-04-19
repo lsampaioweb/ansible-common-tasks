@@ -14,9 +14,7 @@
     block: |
       export GNOME_SHELL_SESSION_MODE=ubuntu
       export XDG_CURRENT_DESKTOP=ubuntu:GNOME
-
-      Unset DBUS_SESSION_BUS_ADDRESS
-      Unset XDG_RUNTIME_DIR
+      export XDG_SESSION_TYPE=x11
   register: "output"
   notify: "Restart Xrdp"
 
