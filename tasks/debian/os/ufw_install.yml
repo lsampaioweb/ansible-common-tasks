@@ -1,0 +1,20 @@
+---
+- name: "Installing UFW package using common apt task"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt.yml"
+  vars:
+    packages:
+      - { name: "ufw" }
+
+- name: "Setting UFW default policies and enabling logging"
+  community.general.ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  loop:
+    - { direction: "incoming", policy: "{{ ufw.default_incoming_policy | default('deny') }}" }
+    - { direction: "outgoing", policy: "{{ ufw.default_outgoing_policy | default('allow') }}" }
+
+- name: "Enabling and starting UFW service"
+  community.general.ufw:
+    state: "enabled"
