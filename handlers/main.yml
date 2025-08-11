@@ -89,7 +89,7 @@
     delay: 1
   register: "output"
 
-- name: "Update CA Certificates"
+- name: "Updating the CA list - Debian"
   ansible.builtin.command: "update-ca-certificates"
   register: "output"
   changed_when: output.rc == 0

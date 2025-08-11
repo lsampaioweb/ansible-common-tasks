@@ -1,18 +1,22 @@
 ---
-- name: "Copying certificate to host"
+- name: "Installing CA certificates as trusted"
   ansible.builtin.copy:
-    src: "{{ ssl_ca_certificate_path }}"
-    dest: "/usr/local/share/ca-certificates/"
+    src: "{{ item }}"
+    dest: "{{ ca_certificates_path }}/"
     mode: "0644"
-  notify: "Update CA Certificates"
+  loop: "{{ ca_certificates | default([]) }}"
+  notify:
+    - "Updating the CA list - Debian"
 
-- name: "Editing the known_hosts file to trust servers with SSH keys signed by the Certificate Authority (CA) OpenSSH keypair"
+- name: "Configuring SSH known hosts for CA-signed server keys"
   ansible.builtin.lineinfile:
-    path: "/etc/ssh/ssh_known_hosts"
-    line: "@cert-authority * {{ lookup('ansible.builtin.file', ssh_ca_certificate_path) }}"
+    path: "{{ ssh_known_hosts }}"
+    line: "@cert-authority * {{ lookup('ansible.builtin.file', item) }}"
     create: true
     mode: "0644"
-  notify: "Restarting the SSH server"
+  loop: "{{ ssh_host_ca_keys | default([]) }}"
+  notify:
+    - "Restarting the SSH server"
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   ansible.builtin.meta: "flush_handlers"
