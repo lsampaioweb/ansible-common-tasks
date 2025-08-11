@@ -1,21 +1,25 @@
 ---
-- name: "Checking if the folder exists - {{ nssdb_path }}"
+- name: "Setting path for user's NSS certificate database"
+  ansible.builtin.set_fact:
+    nssdb_path: "{{ lookup('env', 'HOME') }}/.pki/nssdb"
+
+- name: "Checking if the user's NSS database directory exists at {{ nssdb_path }}"
   ansible.builtin.stat:
     path: "{{ nssdb_path }}"
   register: "nssdb_stat"
 
 - name: "Creating the folder {{ nssdb_path }}"
+  when: not nssdb_stat.stat.exists
   ansible.builtin.file:
     path: "{{ nssdb_path }}"
     state: "directory"
     recurse: true
-  when: not nssdb_stat.stat.exists
 
 - name: "Initializing an empty database at {{ nssdb_path }}"
+  when: not nssdb_stat.stat.exists
   ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
   register: "output"
   changed_when: output.rc == 0
-  when: not nssdb_stat.stat.exists
 
 - name: "Installing the certificates at {{ nssdb_path }}"
   ansible.builtin.command: >
