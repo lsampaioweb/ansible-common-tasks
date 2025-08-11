@@ -1,5 +1,5 @@
 ---
-- name: "Applying UFW rule for {{ item.name | default('') }}"
+- name: "Applying UFW rule"
   community.general.ufw:
     rule: "{{ item.rule | default(omit) }}"
     name: "{{ item.name | default(omit) }}"
@@ -17,4 +17,5 @@
     logging: "{{ item.logging | default(omit) }}"
     comment: "{{ item.comment | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
+  loop: "{{ rules | default([]) }}"
   register: "output"
