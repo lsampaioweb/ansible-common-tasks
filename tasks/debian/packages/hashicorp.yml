@@ -14,11 +14,11 @@
 - name: "Installing apt packages"
   ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
   vars:
+    update_cache: true
     packages:
-      - {name: "packer", update_cache: true}
-      - {name: "terraform", update_cache: true}
-  notify:
-    - "HashiCorp Auto Completition"
+      - {name: "packer", state: "latest", handler_to_notify: "Enable Packer autocomplete"}
+      - {name: "terraform", state: "latest", handler_to_notify: "Enable Terraform autocomplete"}
+      - {name: "vault", state: "latest"}
 
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"
