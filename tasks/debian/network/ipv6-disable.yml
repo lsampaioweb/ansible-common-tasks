@@ -35,6 +35,8 @@
     - ansible_facts.services["NetworkManager.service"] is defined
     - ansible_facts.services["NetworkManager.service"].state == "running"
     - active_connections.stdout_lines | default([]) | length > 0
+    # Disable IPv6 for all active connections except loopback.
+    - item != "lo"
   community.general.nmcli:
     conn_name: "{{ item }}"
     type: "ethernet"
