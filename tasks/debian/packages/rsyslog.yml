@@ -1,0 +1,9 @@
+---
+- name: "Installing the Rsyslog package"
+  ansible.builtin.include_role:
+    name: "common"
+    tasks_from: "debian/packages/apt.yml"
+  vars:
+    update_cache: true
+    packages:
+      - {name: "rsyslog", state: "latest"}

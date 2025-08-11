@@ -1,4 +1,9 @@
 ---
+- name: "Apply sysctl configuration"
+  ansible.builtin.command: "/sbin/sysctl --system"
+  register: "output"
+  changed_when: output.rc == 0
+
 - name: "Update Grub"
   ansible.builtin.command: "update-grub"
   register: "output"

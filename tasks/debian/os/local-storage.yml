@@ -47,15 +47,15 @@
 
 - name: "Creating logical volumes"
   community.general.lvol:
-    vg: "{{ item.0.name }}"     # Volume group name
-    lv: "{{ item.1.name }}"     # Logical volume name
-    size: "{{ item.1.size }}"   # Size of the logical volume
+    vg: "{{ item.0.name }}"     # Volume group name.
+    lv: "{{ item.1.name }}"     # Logical volume name.
+    size: "{{ item.1.size }}"   # Size of the logical volume.
     resizefs: true
     shrink: false
     state: "present"
   loop: "{{ query('subelements', vgs, 'lvm') }}"  # Flattened list of volume groups and their logical volumes.
   loop_control:
-    label: "{{ item.1.name }}"  # Label for the logical volume
+    label: "{{ item.1.name }}"  # Label for the logical volume.
   register: "lvol_output"
 
 - name: "Creating filesystems on logical volumes"
@@ -65,7 +65,7 @@
     state: "present"
   loop: "{{ query('subelements', vgs, 'lvm') }}"  # Flattened list of volume groups and their logical volumes.
   loop_control:
-    label: "/dev/{{ item.0.name }}/{{ item.1.name }}"  # Label for the logical volume
+    label: "/dev/{{ item.0.name }}/{{ item.1.name }}"  # Label for the logical volume.
   register: "filesystem_output"
 
 - name: "Creating the directories that will be mounted"

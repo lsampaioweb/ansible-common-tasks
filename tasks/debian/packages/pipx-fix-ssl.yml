@@ -1,0 +1,28 @@
+---
+- name: "Fixing SSL certificate issues for pipx environments"
+  block:
+    - name: "Finding python site-packages directories in pipx venvs"
+      ansible.builtin.find:
+        paths: "/opt/pipx/venvs"
+        patterns: "site-packages"
+        file_type: "directory"
+        recurse: true
+      register: "site_packages_dirs"
+
+    - name: "Finding certifi directories"
+      ansible.builtin.find:
+        paths: "{{ item.path }}"
+        patterns: "certifi"
+        file_type: "directory"
+      loop: "{{ site_packages_dirs.files | default([]) }}"
+      register: "certifi_dirs"
+
+    - name: "Linking system certificates to pipx environments"
+      when: certifi_dirs.results | default([]) | map(attribute='files') | flatten | length > 0
+      ansible.builtin.file:
+        src: "/etc/ssl/certs/ca-certificates.crt"
+        dest: "{{ item.path }}/cacert.pem"
+        state: "link"
+        force: true
+      loop: "{{ certifi_dirs.results | default([]) | map(attribute='files') | flatten }}"
+      register: "result"

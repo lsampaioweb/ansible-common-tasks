@@ -1,0 +1,18 @@
+---
+- name: "Configuring GRUB boot menu"
+  when: grub_timeout is defined
+  ansible.builtin.lineinfile:
+    path: "/etc/default/grub"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    insertafter: "{{ item.after | default(omit) }}"
+    firstmatch: true
+    state: "present"
+  loop:
+    - { regexp: "GRUB_TIMEOUT_STYLE=", line: "GRUB_TIMEOUT_STYLE=menu" }
+    - { regexp: "GRUB_TIMEOUT=", line: 'GRUB_TIMEOUT={{ grub_timeout }}', after: 'GRUB_TIMEOUT_STYLE' }
+    - { regexp: "GRUB_RECORDFAIL_TIMEOUT=", line: 'GRUB_RECORDFAIL_TIMEOUT={{ grub_timeout }}', after: 'GRUB_TIMEOUT=' }
+  loop_control:
+    label: "{{ item.line }}"
+  register: "output"
+  notify: "Update Grub"

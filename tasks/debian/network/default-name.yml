@@ -1,0 +1,8 @@
+---
+- name: "Enabling predictable network interface names"
+  ansible.builtin.replace:
+    path: "/etc/default/grub"
+    regexp: '^GRUB_CMDLINE_LINUX="(?!net\.ifnames=0 biosdevname=0)(.*)"$'
+    replace: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 \1"'
+  register: "output"
+  notify: "Update Grub"

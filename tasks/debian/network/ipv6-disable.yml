@@ -1,35 +1,47 @@
 ---
-# - name: "Disabling IPV6 on the server"
-#   ansible.builtin.replace:
-#     path: "/etc/default/grub"
-#     regexp: '^GRUB_CMDLINE_LINUX="(.*)(?<! ipv6\.disable=1)"$'
-#     replace: 'GRUB_CMDLINE_LINUX="\1 ipv6.disable=1"'
-#   register: "output"
-#   notify: "Update Grub"
+- name: "Disabling IPv6 via kernel parameters"
+  ansible.builtin.replace:
+    path: "/etc/default/grub"
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)(?<!ipv6\.disable=1)"$'
+    replace: 'GRUB_CMDLINE_LINUX="\1 ipv6.disable=1"'
+  register: "grub_updated"
+  notify: "Update Grub"
 
-- name: "Copying the disable IPV6 config file to the server"
+- name: "Copying IPv6 disable configuration to sysctl"
   ansible.builtin.copy:
     src: "disable-ipv6.conf"
-    dest: "/etc/sysctl.d/"
-    mode: "preserve"
-  register: "output"
+    dest: "/etc/sysctl.d/disable-ipv6.conf"
+    mode: "0644"
+  register: "sysctl_updated"
+  notify: "Apply sysctl configuration"
 
-- name: "Removing all IPV6 references from the /etc/hosts file"
+- name: "Commenting out IPv6 entries in /etc/hosts"
   ansible.builtin.replace:
     path: "/etc/hosts"
     regexp: '^([^#\n]*[:]{2}.*)$'
     replace: '#\1'
 
-- name: "Populating the service facts"
+- name: "Populating service facts"
   ansible.builtin.service_facts:
-  when: output is defined and output.changed
 
-- name: "Disabling IPV6 with network manager"
-  ansible.builtin.command: "/bin/nmcli device modify {{ ansible_default_ipv4.interface }} ipv6.method 'disabled'"
+- name: "Getting active network connection name"
+  ansible.builtin.command: "/usr/bin/nmcli -t -f NAME c show --active"
+  register: "active_connections"
+  failed_when: false
+  changed_when: false
+
+- name: "Disabling IPv6 in NetworkManager"
   when:
-    - output is defined
-    - output.changed
-    - ansible_facts.services["NetworkManager.service"] is defined and ansible_facts.services["NetworkManager.service"]['status'] == 'enabled'
-  register: "output"
-  changed_when: output.rc == 0
+    - ansible_facts.services["NetworkManager.service"] is defined
+    - ansible_facts.services["NetworkManager.service"].state == "running"
+    - active_connections.stdout_lines | default([]) | length > 0
+  community.general.nmcli:
+    conn_name: "{{ item }}"
+    type: "ethernet"
+    method6: "disabled"
+    state: "present"
+  loop: "{{ active_connections.stdout_lines | default([]) }}"
   notify: "Restart network"
+
+- name: "Force all notified handlers to run at this point"
+  ansible.builtin.meta: "flush_handlers"

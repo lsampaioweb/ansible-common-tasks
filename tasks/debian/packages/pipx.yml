@@ -1,10 +1,5 @@
 ---
-- name: "Ensure the pipx package is installed"
-  community.general.pipx:
-    name: "pipx"
-    state: "present"
-
-- name: "Python packages"
+- name: "Installing system-wide Python applications with pipx"
   environment:
     PIPX_HOME: "/opt/pipx"
     PIPX_BIN_DIR: "/usr/local/bin"
@@ -19,6 +14,8 @@
     inject_packages: "{{ item.inject_packages | default(omit) }}"
     index_url: "{{ item.index_url | default(omit) }}"
     python: "{{ item.python | default(omit) }}"
-    system_site_packages: "{{ item.system_site_packages | default(true, true) }}"
+    system_site_packages: "{{ item.system_site_packages | default(true) }}"
+    global: "{{ item.global | default(true) }}"
+    executable: "{{ item.executable | default('/usr/local/bin/pipx') }}"
   loop: "{{ packages | default([]) }}"
   register: "output"

@@ -1,0 +1,41 @@
+---
+- name: "Waiting for cloud-init / user-data to finish"
+  ansible.builtin.command:
+    cmd: "cloud-init status --wait"
+  register: "cloud_init_status"
+  changed_when: false
+  failed_when: false
+
+- name: "Ensure no other package operations are running"
+  ansible.builtin.shell: |
+    killall -q apt-get dpkg || true
+    while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done
+  changed_when: false
+
+- name: "Removing apt lock files"
+  ansible.builtin.file:
+    state: "absent"
+    path: "{{ item }}"
+  loop:
+    - "/var/lib/dpkg/lock"
+    - "/var/lib/dpkg/lock-frontend"
+
+- name: "Importing common tasks for package management"
+  ansible.builtin.import_tasks: "apt.yml"
+
+- name: "Manually upgrading any left over packages"
+  ansible.builtin.shell: >-
+    set -o pipefail && \
+    sudo apt list -u -q 2>/dev/null | grep "/" | cut -d/ -f1 | xargs -n 1 sudo apt install -y
+  args:
+    executable: "/usr/bin/bash"
+  register: "output"
+  failed_when: false
+  changed_when: output.rc == 0
+  when: upgrade is defined and upgrade | bool
+
+- name: "Check if a reboot is required after updates"
+  when: reboot_allowed is defined and reboot_allowed | bool
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/os/reboot-if-required.yml"

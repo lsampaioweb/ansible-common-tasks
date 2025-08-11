@@ -1,57 +1,37 @@
 ---
-- name: "Waiting for cloud-init / user-data to finish"
-  ansible.builtin.command:
-    cmd: "cloud-init status --wait"
-  register: "cloud_init_status"
-  changed_when: false
-  failed_when: false
-
-- name: "Ensure no other package operations are running"
-  ansible.builtin.shell: |
-    killall -q apt-get dpkg || true
-    while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done
-  changed_when: false
-
-- name: "Removing apt lock files"
-  ansible.builtin.file:
-    state: "absent"
-    path: "{{ item }}"
-  loop:
-    - "/var/lib/dpkg/lock"
-    - "/var/lib/dpkg/lock-frontend"
-
-- name: "Upgrading the packages"
+- name: "Updating APT package cache"
+  when: update_cache is defined
   ansible.builtin.apt:
-    update_cache: "{{ update_cache | default(omit) }}"
-    upgrade: "{{ upgrade | default(omit) }}"
-  when: (update_cache | default(false)) or (upgrade | default('false')) != 'false'
+    update_cache: "{{ update_cache | default(true) }}"
 
-- name: "Apt packages"
+- name: "Upgrading all system packages to the latest version"
+  when: upgrade is defined
+  ansible.builtin.apt:
+    upgrade: "{{ upgrade | default('full') }}"
+
+- name: "Installing, upgrading, or removing specified packages"
   ansible.builtin.apt:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
-    upgrade: "{{ item.upgrade | default(omit) }}"
     update_cache: "{{ item.update_cache | default(omit) }}"
+    upgrade: "{{ item.upgrade | default(omit) }}"
     install_recommends: "{{ item.install_recommends | default(omit) }}"
     clean: "{{ item.clean | default(omit) }}"
     autoclean: "{{ item.autoclean | default(omit) }}"
     autoremove: "{{ item.autoremove | default(omit) }}"
+    purge: "{{ item.purge | default(omit) }}"
+  notify: "{{ item.handler_to_notify | default(omit) }}"
   loop: "{{ packages | default([]) }}"
   register: "output"
 
-- name: "Manually upgrading any left over packages"
-  ansible.builtin.shell: >-
-    set -o pipefail && \
-    sudo apt list -u -q 2>/dev/null | grep "/" | cut -d/ -f1 | xargs -n 1 sudo apt install -y
-  args:
-    executable: "/usr/bin/bash"
-  register: "output"
-  failed_when: false
-  changed_when: output.rc == 0
-  when: upgrade is defined and upgrade | bool
-
 - name: "Removing dependencies that are no longer required and unnecessary packages from the cache"
+  when: (autoclean is defined) or (autoremove  is defined)
   ansible.builtin.apt:
     autoclean: "{{ autoclean | default(omit) }}"
     autoremove: "{{ autoremove | default(omit) }}"
-  when: (autoclean | default(false)) or (autoremove | default(false))
+
+- name: "Checking if a reboot is required after updates"
+  when: reboot_allowed is defined and reboot_allowed | bool
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/os/reboot-if-required.yml"
