@@ -10,6 +10,7 @@
   notify: "Restart Timesyncd"
 
 - name: "Setting up NTP Servers - Chronyd"
+  when: (ntp_service is defined and ntp_service == "chrony")
   ansible.builtin.lineinfile:
     path: "/etc/chrony/chrony.conf"
     insertafter: "# Use Debian"
@@ -17,5 +18,4 @@
     state: "{{ item.state }}"
   register: "output"
   loop: "{{ ntp_servers | default([]) }}"
-  when: (ntp_service is defined and ntp_service == "chrony")
   notify: "Restart Chronyd"
