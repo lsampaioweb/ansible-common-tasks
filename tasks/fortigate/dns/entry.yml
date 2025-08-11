@@ -21,15 +21,15 @@
     fail_conditions: []
 
 - name: "Collecting conditions for failing (not success and not 404)"
+  when: output.meta is defined
   ansible.builtin.set_fact:
     fail_conditions: "{{ fail_conditions + [result.status != 'success' and result.http_status != 404] }}"
   loop: "{{ output.meta | default([]) }}"
   loop_control:
     loop_var: "result"
     label: "{{ result.object_path }}"
-  when: output.meta is defined
 
 - name: "Checking if any failures occurred"
+  when: fail_conditions | select('equalto', true) | list | length > 0
   ansible.builtin.fail:
     msg: "Error found in DNS configuration"
-  when: fail_conditions | select('equalto', true) | list | length > 0
