@@ -1,0 +1,20 @@
+---
+- name: "Installing VirtualBox"
+  ansible.builtin.include_role:
+    name: "common"
+    tasks_from: "debian/packages/apt.yml"
+  vars:
+    update_cache: true
+    packages:
+      - {name: "virtualbox-7.0", state: "latest", install_recommends: true}
+
+- name: "Adding current user to the vboxusers group"
+  when: user is defined
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups:
+      - "vboxusers"
+      - "vboxsf"
+    append: true
+  notify:
+    - "Force group membership for VirtualBox groups"
