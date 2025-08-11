@@ -1,0 +1,13 @@
+---
+- name: "Copying the jail config file to the Fail2ban folder"
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop: "{{ jails | default([]) }}"
+  register: "output"
+  # Notifying the handler ensures the service is restarted only if the config changes.
+  notify:
+    - "Restarting and Enabling fail2ban"

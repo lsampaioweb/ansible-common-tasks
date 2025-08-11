@@ -1,0 +1,9 @@
+---
+- name: "Installing Fail2ban package using common apt task"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt.yml"
+  vars:
+    update_cache: true
+    packages:
+      - { name: "fail2ban" }
