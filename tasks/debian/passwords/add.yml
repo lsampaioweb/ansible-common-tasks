@@ -1,7 +1,8 @@
 ---
 - name: "Trying to retrieve the password in order to verify if already exists or it has changed - '{{ password_id }}'"
-  ansible.builtin.include_tasks: "{{ path_debian_passwords_get }}"
-  no_log: true
+  ansible.builtin.include_role:
+    name: "common"
+    tasks_from: "debian/password/get.yml"
 
 - name: "Adding the password into the Secret Manager - '{{ password_id }}'"
   become: false
