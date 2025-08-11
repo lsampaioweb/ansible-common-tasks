@@ -53,13 +53,20 @@
     enabled: true
   register: "output"
 
-- name: "HashiCorp Auto Completition"
+- name: "Enable Packer autocomplete"
   become: false
-  ansible.builtin.command: "{{ item }}"
+  ansible.builtin.command: "packer -autocomplete-install"
   register: "autocomplete_output"
-  loop:
-    - "packer -autocomplete-install"
-    - "terraform -install-autocomplete"
+  failed_when:
+    - autocomplete_output.rc != 0
+    - "'already installed' not in autocomplete_output.stderr"
+  changed_when:
+    - autocomplete_output.rc == 0
+
+- name: "Enable Terraform autocomplete"
+  become: false
+  ansible.builtin.command: "terraform -install-autocomplete"
+  register: "autocomplete_output"
   failed_when:
     - autocomplete_output.rc != 0
     - "'already installed' not in autocomplete_output.stderr"
@@ -154,5 +161,13 @@
   ansible.builtin.command: "netplan apply"
   poll: 1
   async: 60
+  register: "output"
+  changed_when: output.rc == 0
+
+- name: "Force group membership for VirtualBox groups"
+  ansible.builtin.command: "newgrp {{ item }}"
+  loop:
+    - vboxusers
+    - vboxsf
   register: "output"
   changed_when: output.rc == 0
