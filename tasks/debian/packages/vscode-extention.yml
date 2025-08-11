@@ -1,11 +1,17 @@
 ---
-- name: "Managing vscode extentions"
-  become: false
-  ansible.builtin.command: "code {{ command }} {{ item.name }}"
-  vars:
-    command: "{{ (item.state is not defined or item.state == 'install') | ternary('--install-extension', '--uninstall-extension') }}"
-  register: "output"
-  changed_when:
-    - "'was successfully installed' in output.stdout"
-    - "'is already installed' not in output.stdout"
-  loop: "{{ extentions | default([]) }}"
+- name: "Listing currently installed VSCode extensions"
+  ansible.builtin.command: "code --list-extensions"
+  register: "installed_vscode_extensions"
+  changed_when: false
+  # We ignore errors in case the 'code' command isn't available yet or if no extensions are installed.
+  ignore_errors: true
+
+- name: "Installing desired VSCode extensions"
+  # This is the key to idempotency:
+  # The task only runs if the extension name is NOT in the list we registered.
+  when: >
+    installed_vscode_extensions.stdout is defined and
+    item.name not in installed_vscode_extensions.stdout_lines
+  ansible.builtin.command: "code --install-extension {{ item.name }}"
+  loop: "{{ extensions | default([]) }}"
+  changed_when: false

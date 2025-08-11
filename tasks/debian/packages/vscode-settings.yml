@@ -1,0 +1,9 @@
+---
+- name: "Copying default VSCode configuration files"
+  become: false
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ lookup('env', 'HOME') }}/.config/Code/User/"
+    mode: "0644"
+  loop: "{{ files | default([]) }}"
+  register: "output"
