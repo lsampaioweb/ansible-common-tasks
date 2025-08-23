@@ -46,9 +46,12 @@
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"
 
-- name: "Adding the user into the 'docker' group - {{ ansible_user }}"
-  when: ansible_user is defined
+- name: "Adding current user to the docker group"
+  when: user is defined
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
-    groups: "docker"
+    name: "{{ user }}"
+    groups:
+      - "docker"
     append: true
+  notify:
+    - "Force group membership for Docker group"
