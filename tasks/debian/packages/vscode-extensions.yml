@@ -14,4 +14,6 @@
     item.name not in installed_vscode_extensions.stdout_lines
   ansible.builtin.command: "code --install-extension {{ item.name }}"
   loop: "{{ extensions | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   changed_when: false
