@@ -1,6 +1,9 @@
 ---
 - name: "Installing Docker dependencies"
-  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+- name: "Installing apt packages"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt"
   vars:
     update_cache: true
     upgrade: "safe"
@@ -26,21 +29,25 @@
     state: "present"
 
 - name: "Installing apt packages"
-  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt"
   vars:
     packages:
       - {name: "docker-ce", install_recommends: true}
       - {name: "docker-ce-cli"}
       - {name: "containerd.io"}
       - {name: "docker-buildx-plugin"}
-      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}  # Newer Compose version
+      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
       - {name: "docker-registry"}
-  notify: "Restarting and Enabling docker"
+  notify:
+    - "Restarting and Enabling docker"
 
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"
 
 - name: "Adding the user into the 'docker' group - {{ ansible_user }}"
+  when: ansible_user is defined
   ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: "docker"
