@@ -52,5 +52,3 @@
     groups:
       - "docker"
     append: true
-  notify:
-    - "Force group membership for Docker group"

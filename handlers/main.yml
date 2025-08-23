@@ -141,13 +141,6 @@
     enabled: true
   register: "output"
 
-- name: "Force group membership for Docker group"
-  ansible.builtin.command: "newgrp {{ item }}"
-  loop:
-    - "docker"
-  register: "output"
-  changed_when: output.rc == 0
-
 - name: "Refresh ~/.bashrc"
   become: false
   ansible.builtin.shell: >-
@@ -176,14 +169,6 @@
   ansible.builtin.command: "netplan apply"
   poll: 1
   async: 60
-  register: "output"
-  changed_when: output.rc == 0
-
-- name: "Force group membership for VirtualBox groups"
-  ansible.builtin.command: "newgrp {{ item }}"
-  loop:
-    - vboxusers
-    - vboxsf
   register: "output"
   changed_when: output.rc == 0
 

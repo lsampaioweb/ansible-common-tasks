@@ -16,5 +16,3 @@
       - "vboxusers"
       - "vboxsf"
     append: true
-  notify:
-    - "Force group membership for VirtualBox groups"
