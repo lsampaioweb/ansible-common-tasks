@@ -1,6 +1,5 @@
 ---
 - name: "Installing Docker dependencies"
-- name: "Installing apt packages"
   ansible.builtin.import_role:
     name: "common"
     tasks_from: "debian/packages/apt"
