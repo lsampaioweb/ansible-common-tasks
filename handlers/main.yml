@@ -141,6 +141,13 @@
     enabled: true
   register: "output"
 
+- name: "Force group membership for Docker group"
+  ansible.builtin.command: "newgrp {{ item }}"
+  loop:
+    - "docker"
+  register: "output"
+  changed_when: output.rc == 0
+
 - name: "Refresh ~/.bashrc"
   become: false
   ansible.builtin.shell: >-
