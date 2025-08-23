@@ -1,4 +1,16 @@
 ---
+- name: "Defining conflicting VSCode sources files"
+  ansible.builtin.set_fact:
+    vscode_conflicting_sources:
+      - "/etc/apt/sources.list.d/vscode.sources"
+      - "/usr/share/keyrings/microsoft.gpg"
+
+- name: "Removing conflicting VSCode sources files"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+  loop: "{{ vscode_conflicting_sources }}"
+
 - name: "Adding Microsoft signing key"
   ansible.builtin.get_url:
     url: "https://packages.microsoft.com/keys/microsoft.asc"
@@ -16,3 +28,9 @@
   vars:
     packages:
       - {name: "code", update_cache: true}
+
+- name: "Removing conflicting VSCode sources files"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "absent"
+  loop: "{{ vscode_conflicting_sources }}"
