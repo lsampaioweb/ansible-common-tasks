@@ -30,7 +30,7 @@
   failed_when: false
   changed_when: false
 
-- name: "Disabling IPv6 in NetworkManager"
+- name: "Disabling IPv6 in NetworkManager (Desktop)"
   when:
     - ansible_facts.services["NetworkManager.service"] is defined
     - ansible_facts.services["NetworkManager.service"].state == "running"
@@ -43,7 +43,7 @@
     method6: "disabled"
     state: "present"
   loop: "{{ active_connections.stdout_lines | default([]) }}"
-  notify: "Restart network"
+  notify: "Restart NetworkManager"
 
 - name: "Force all notified handlers to run at this point"
   ansible.builtin.meta: "flush_handlers"

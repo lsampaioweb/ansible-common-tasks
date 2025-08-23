@@ -91,6 +91,14 @@
   async: 60
   register: "output"
 
+- name: "Restart NetworkManager"
+  ansible.builtin.systemd:
+    name: "NetworkManager"
+    state: "restarted"
+  poll: 1
+  async: 60
+  register: "output"
+
 - name: "Reload network"
   ansible.builtin.command: "ifreload -a"
   register: "output"
