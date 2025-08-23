@@ -44,6 +44,9 @@
   loop_control:
     label: "{{ item.name }}"
   register: "lvg_output"
+  failed_when:
+    - lvg_output.failed
+    - "'already in' not in lvg_output.msg"
 
 - name: "Creating logical volumes"
   community.general.lvol:
