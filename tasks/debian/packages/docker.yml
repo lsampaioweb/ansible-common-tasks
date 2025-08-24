@@ -45,8 +45,12 @@
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: "flush_handlers"
 
+- name: "Setting the user variable if not defined"
+  when: user is not defined
+  ansible.builtin.set_fact:
+    user: "{{ lookup('env', 'USER') }}"
+
 - name: "Adding current user to the docker group"
-  when: user is defined
   ansible.builtin.user:
     name: "{{ user }}"
     groups:
