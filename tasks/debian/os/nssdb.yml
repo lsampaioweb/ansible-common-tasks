@@ -1,5 +1,6 @@
 ---
 - name: "Setting path for user's NSS certificate database"
+  when: nssdb_path is not defined
   ansible.builtin.set_fact:
     nssdb_path: "{{ lookup('env', 'HOME') }}/.pki/nssdb"
 
