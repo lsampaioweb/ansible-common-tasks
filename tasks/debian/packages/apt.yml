@@ -25,13 +25,13 @@
   register: "output"
 
 - name: "Removing dependencies that are no longer required and unnecessary packages from the cache"
-  when: (autoclean is defined) or (autoremove  is defined)
+  when: (autoclean is defined) or (autoremove is defined)
   ansible.builtin.apt:
     autoclean: "{{ autoclean | default(omit) }}"
     autoremove: "{{ autoremove | default(omit) }}"
 
 - name: "Checking if a reboot is required after updates"
   when: reboot_allowed is defined and reboot_allowed | bool
-  ansible.builtin.import_role:
+  ansible.builtin.include_role:
     name: "common"
     tasks_from: "debian/os/reboot-if-required.yml"
