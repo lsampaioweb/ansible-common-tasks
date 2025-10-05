@@ -1,11 +1,11 @@
 ---
 - name: "Setting system hostname"
-  when: (hostname is defined)
+  when: hostname is defined
   ansible.builtin.hostname:
-    name: "{{ hostname }}{{ (domain is defined) | ternary('.' + domain, '') }}"
+    name: "{{ hostname }}{{ ('.' + domain) if domain is defined else '' }}"
 
 - name: "Setting hostname in /etc/hosts"
-  when: (hostname is defined)
+  when: hostname is defined
   ansible.builtin.lineinfile:
     path: "/etc/hosts"
     # This regex finds the line that starts with 127.0.1.1
