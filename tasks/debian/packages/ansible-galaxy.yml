@@ -7,5 +7,6 @@
     no_deps: "{{ item.no_deps | default(omit) }}"
     requirements_file: "{{ item.requirements_file | default(omit) }}"
     force: "{{ item.force | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
   loop: "{{ packages | default([]) }}"
   register: "output"
