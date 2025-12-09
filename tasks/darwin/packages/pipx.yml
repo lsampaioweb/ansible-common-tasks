@@ -11,7 +11,7 @@
     include_injected: "{{ item.include_injected | default(omit) }}"
     inject_packages: "{{ item.inject_packages | default(omit) }}"
     index_url: "{{ item.index_url | default(omit) }}"
-    executable: "/usr/local/bin/pipx"  # Use Homebrew-installed pipx.
+    executable: "{{ item.executable | default(lookup('pipe', 'which pipx')) }}"
   loop: "{{ packages }}"
   loop_control:
     label: "{{ item.name }}"
