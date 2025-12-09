@@ -1,13 +1,13 @@
 ---
 - name: "Updating Homebrew package cache"
-  when: update_cache is defined and update_cache | bool
   become: false
+  when: update_cache is defined and update_cache | bool
   community.general.homebrew:
     update_homebrew: true
 
 - name: "Upgrading all system packages to the latest version"
-  when: upgrade is defined and upgrade | bool
   become: false
+  when: upgrade is defined and upgrade | bool
   community.general.homebrew:
     upgrade_all: true
 
