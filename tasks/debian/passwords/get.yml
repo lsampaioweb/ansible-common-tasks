@@ -1,8 +1,8 @@
 ---
 - name: "Trying to retrieve the password in order to verify if already exists or it has changed - '{{ password_id }}'"
   become: false
+  no_log: "{{ not debug | default(true) }}"
   ansible.builtin.command: "secret-tool lookup password {{ password_id }}"
   register: "output"
   failed_when: false
   changed_when: false
-  no_log: true
