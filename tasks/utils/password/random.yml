@@ -1,5 +1,6 @@
 ---
 - name: "Generating a random password"
+  no_log: "{{ not debug | default(true) }}"
   ansible.builtin.set_fact:
     random_password: >-
       {{ lookup('ansible.builtin.password', p_dest, chars=p_chars, length=p_length) }}
@@ -7,4 +8,3 @@
     p_dest: "{{ password_dest | default('/dev/null') }}"
     p_chars: "{{ password_chars | default(['ascii_letters', 'digits']) }}"
     p_length: "{{ password_length | default(30) }}"
-  no_log: true
