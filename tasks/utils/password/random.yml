@@ -1,10 +1,11 @@
 ---
+# https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/password_lookup.html
 - name: "Generating a random password"
   no_log: "{{ not debug | default(true) }}"
   ansible.builtin.set_fact:
-    random_password: >-
-      {{ lookup('ansible.builtin.password', p_dest, chars=p_chars, length=p_length) }}
+    random_password: "{{ lookup('ansible.builtin.password', pass_dest, chars=pass_chars, length=pass_length) }}"
   vars:
-    p_dest: "{{ password_dest | default('/dev/null') }}"
-    p_chars: "{{ password_chars | default(['ascii_letters', 'digits']) }}"
-    p_length: "{{ password_length | default(30) }}"
+    pass_dest: "{{ password_destination | default('/dev/null') }}"
+    # Valid values are: "ascii_letters", "digits", "hexdigits", "octdigits", "punctuation", "printable" and "whitespace".
+    pass_chars: "{{ password_characters | default(['ascii_letters', 'digits']) }}"
+    pass_length: "{{ password_length | default(30) }}"
