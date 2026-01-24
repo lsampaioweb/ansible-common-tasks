@@ -1,0 +1,20 @@
+---
+- name: "Sending an email: {{ mail_subject }}"
+  community.general.mail:
+    host: "{{ mail_host | default('smtp.gmail.com', true) }}"
+    port: "{{ mail_port | default(587, true) }}"
+    secure: "{{ mail_secure | default('starttls', true) }}"
+    headers: "{{ mail_headers | default(omit, true) }}"
+    timeout: "{{ mail_timeout | default(omit, true) }}"
+    charset: "{{ mail_charset | default(omit, true) }}"
+
+    username: "{{ mail_username }}"
+    password: "{{ mail_password }}"
+
+    from: "{{ mail_from }}"
+    to: "{{ mail_to }}"
+    cc: "{{ mail_cc | default(omit, true) }}"
+
+    subject: "{{ mail_subject }}"
+    subtype: "{{ mail_subtype | default('html', true) }}"
+    body: "{{ mail_body | default(lookup('ansible.builtin.template', mail_body_file), true) }}"
