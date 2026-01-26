@@ -1,0 +1,10 @@
+---
+- name: "Formatting certificate serial number from Decimal to Hex with colons"
+  ansible.builtin.set_fact:
+    # 3. Final formatted serial with colons.
+    formatted_serial_number: "{{ padded_hex | regex_findall('..') | join(':') }}"
+  vars:
+    # 1. Get raw hex.
+    raw_hex: "{{ '%x' | format(input_serial_decimal | int) }}"
+    # 2. Pad with '0' if length is odd (so 3 chars become 4, etc.)
+    padded_hex: "{{ ('0' + raw_hex) if (raw_hex | length % 2 != 0) else raw_hex }}"
