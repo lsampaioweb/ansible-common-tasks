@@ -1,8 +1,8 @@
 ---
 - name: "Installing system-wide Python applications with pipx"
-  environment:
-    PIPX_HOME: "/opt/pipx"
-    PIPX_BIN_DIR: "/usr/local/bin"
+  # environment:
+  #   PIPX_HOME: "/opt/pipx"
+  #   PIPX_BIN_DIR: "/usr/local/bin"
   community.general.pipx:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
@@ -16,6 +16,6 @@
     python: "{{ item.python | default(omit) }}"
     system_site_packages: "{{ item.system_site_packages | default(true) }}"
     global: "{{ item.global | default(true) }}"
-    executable: "{{ item.executable | default('/usr/local/bin/pipx') }}"
+    executable: "{{ item.executable | default(pipx_executable) | default(omit) }}"
   loop: "{{ packages | default([]) }}"
   register: "output"
