@@ -34,4 +34,4 @@
   when: reboot_allowed is defined and reboot_allowed | bool
   ansible.builtin.include_role:
     name: "common"
-    tasks_from: "debian/os/reboot-if-required.yml"
+    tasks_from: "debian/os/reboot-if-required"
