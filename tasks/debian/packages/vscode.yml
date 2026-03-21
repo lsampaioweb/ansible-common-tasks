@@ -23,14 +23,11 @@
     filename: "vscode"
     state: "present"
 
-- name: "Installing apt packages"
-  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+- name: "Installing VS Code"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt"
   vars:
+    update_cache: true
     packages:
-      - {name: "code", update_cache: true}
-
-- name: "Removing conflicting VSCode sources files"
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: "absent"
-  loop: "{{ vscode_conflicting_sources }}"
+      - {name: "code"}
