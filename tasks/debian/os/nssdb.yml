@@ -22,13 +22,22 @@
   register: "output"
   changed_when: output.rc == 0
 
+- name: "Checking if certificate files exist"
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+  loop: "{{ nssdb_certificates | default([]) }}"
+  register: "nssdb_cert_stats"
+
 - name: "Installing the certificates at {{ nssdb_path }}"
+  when: nssdb_cert_stats.results[idx].stat.exists
   ansible.builtin.command: >
     certutil -A -d 'sql:{{ nssdb_path }}'
     -t '{{ item.trust }}'
     -n '{{ item.name }}'
     -i '{{ item.path }}'
-  loop: '{{ nssdb_certificates | default([]) }}'
+  loop: "{{ nssdb_certificates | default([]) }}"
+  loop_control:
+    index_var: idx
   register: "output"
   changed_when: output.rc == 0
   failed_when: (output.rc != 0)
