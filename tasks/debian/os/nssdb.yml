@@ -4,19 +4,19 @@
   ansible.builtin.set_fact:
     nssdb_path: "{{ lookup('env', 'HOME') }}/.pki/nssdb"
 
-- name: "Checking if the user's NSS database directory exists at {{ nssdb_path }}"
+- name: "Checking if the user's NSS database directory exists at '{{ nssdb_path }}'"
   ansible.builtin.stat:
     path: "{{ nssdb_path }}"
   register: "nssdb_stat"
 
-- name: "Creating the folder {{ nssdb_path }}"
+- name: "Creating the folder '{{ nssdb_path }}'"
   when: not nssdb_stat.stat.exists
   ansible.builtin.file:
     path: "{{ nssdb_path }}"
     state: "directory"
     recurse: true
 
-- name: "Initializing an empty database at {{ nssdb_path }}"
+- name: "Initializing an empty database at '{{ nssdb_path }}'"
   when: not nssdb_stat.stat.exists
   ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
   register: "output"
@@ -28,7 +28,7 @@
   loop: "{{ nssdb_certificates | default([]) }}"
   register: "nssdb_cert_stats"
 
-- name: "Installing the certificates at {{ nssdb_path }}"
+- name: "Installing the certificates at '{{ nssdb_path }}'"
   when: nssdb_cert_stats.results[idx].stat.exists
   ansible.builtin.command: >
     certutil -A -d 'sql:{{ nssdb_path }}'
