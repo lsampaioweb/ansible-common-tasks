@@ -1,15 +1,22 @@
 ---
-- name: "Adding Google signing key"
+- name: "Adding Google Chrome signing key"
   ansible.builtin.get_url:
     url: "https://dl.google.com/linux/linux_signing_key.pub"
     dest: "/etc/apt/trusted.gpg.d/google-chrome.asc"
     mode: "0644"
 
-- name: "Adding repository into sources list"
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google-chrome.asc] http://dl.google.com/linux/chrome/deb/ stable main"
-    filename: "google-chrome"
+- name: "Configuring Google Chrome repository"
+  ansible.builtin.deb822_repository:
+    name: "google-chrome"
     state: "present"
+    uris: "http://dl.google.com/linux/chrome/deb/"
+    suites:
+      - "stable"
+    components:
+      - "main"
+    architectures:
+      - "amd64"
+    signed_by: "/etc/apt/trusted.gpg.d/google-chrome.asc"
 
 - name: "Installing apt packages"
   ansible.builtin.import_role:
@@ -20,8 +27,7 @@
     packages:
       - { name: "google-chrome-stable" }
 
-- name: "Removing duplicated Google Chrome repository entry"
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main"
-    filename: "google-chrome"
+- name: "Removing legacy Google Chrome repository list file added by post-install script"
+  ansible.builtin.file:
+    path: "/etc/apt/sources.list.d/google-chrome.list"
     state: "absent"

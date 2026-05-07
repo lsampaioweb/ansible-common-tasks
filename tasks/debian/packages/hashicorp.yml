@@ -5,14 +5,23 @@
     dest: "/etc/apt/trusted.gpg.d/hashicorp.asc"
     mode: "0644"
 
-- name: "Adding repository into sources list"
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc]  https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-    filename: "hashicorp"
+- name: "Configuring HashiCorp repository"
+  ansible.builtin.deb822_repository:
+    name: "hashicorp"
     state: "present"
+    uris: "https://apt.releases.hashicorp.com"
+    suites:
+      - "{{ ansible_facts['distribution_release'] }}"
+    components:
+      - "main"
+    architectures:
+      - "amd64"
+    signed_by: "/etc/apt/trusted.gpg.d/hashicorp.asc"
 
-- name: "Installing apt packages"
-  ansible.builtin.import_tasks: "roles/common/tasks/debian/packages/apt.yml"
+- name: "Installing HashiCorp packages"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/packages/apt"
   vars:
     update_cache: true
     packages:
@@ -20,5 +29,5 @@
       - {name: "terraform", state: "latest", handler_to_notify: "Enable Terraform autocomplete"}
       - {name: "vault", state: "latest"}
 
-- name: "Force all notified handlers to run at this point, not waiting for normal sync points"
+- name: "Forcing handler execution"
   ansible.builtin.meta: "flush_handlers"

@@ -1,38 +1,37 @@
-# ansible-common-tasks
-Repository with common Ansible tasks.
+# Ansible Common Tasks
 
-# Tasks:
+Reusable tasks shared by all project roles.
 
-### Debian
+#
+### Debian Task Areas
 
-### 1. Known hosts
+### 1. Known Hosts
 
-1. Add the fingerprint of the target nodes to the known_hosts file.
+1. Add and remove target fingerprints in `known_hosts`.
 
 ### 2. Network
 
-1. Disable IPV6
-  Set GRUB_CMDLINE_LINUX="ipv6.disable=1".
+1. Configure predictable network interface names.
+1. Disable IPv6 (GRUB, sysctl, hosts file, and NetworkManager profiles).
 
 ### 3. OS
 
-1. Timezone.
-1. NTP Servers.
+1. Configure timezone.
+1. Configure NTP servers.
+1. Configure GRUB boot menu.
+1. Configure UFW and firewall rules.
+1. Validate reboot requirements.
 
 ### 4. Packages
 
-1. apt.
-1. pip.
-1. snap.
-1. xrdp.
-1. google-chrome.
-1. vscode.
-1. hashicorp.
-1. git.
+1. APT package lifecycle (install, upgrade, cleanup).
+1. pipx package management.
+1. Snap package management.
+1. Tool-specific package tasks such as vscode, hashicorp, docker, git, and fail2ban.
 
-### 5. Password
+### 5. Password and Secrets
 
-1. Add e retrieve passwords from the secret manager.
+1. Add and retrieve passwords from the secret manager.
 
 #
 ### Created by:

@@ -12,20 +12,29 @@
       - {name: "curl"}
       - {name: "software-properties-common"}
 
+- name: "Setting Docker GPG key path"
+  ansible.builtin.set_fact:
+    docker_gpg_file: "/usr/share/keyrings/docker.asc"
+
 - name: "Adding Docker signing key"
   ansible.builtin.get_url:
     url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
-    dest: "/usr/share/keyrings/docker-archive-keyring.asc"
+    dest: "{{ docker_gpg_file }}"
     mode: "0644"
     force: true
 
-- name: "Adding repository into sources list"
-  ansible.builtin.apt_repository:
-    repo: >-
-      deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.asc]
-      https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
-    filename: "docker"
+- name: "Configuring Docker repository"
+  ansible.builtin.deb822_repository:
+    name: "docker"
     state: "present"
+    uris: "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
+    suites:
+      - "{{ ansible_facts['distribution_release'] }}"
+    components:
+      - "stable"
+    architectures:
+      - "amd64"
+    signed_by: "{{ docker_gpg_file }}"
 
 - name: "Installing apt packages"
   ansible.builtin.import_role:

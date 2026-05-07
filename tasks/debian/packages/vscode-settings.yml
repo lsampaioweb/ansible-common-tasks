@@ -1,9 +1,17 @@
 ---
-- name: "Copying default VSCode configuration files"
-  become: false
+- name: "Creating VSCode user configuration directory"
+  ansible.builtin.file:
+    path: "{{ lookup('env', 'HOME') }}/.config/Code/User/"
+    state: "directory"
+    mode: "0755"
+    recurse: true
+
+- name: "Copying the desired VSCode settings"
   ansible.builtin.copy:
-    src: "{{ item }}"
+    src: "{{ item.name }}"
     dest: "{{ lookup('env', 'HOME') }}/.config/Code/User/"
     mode: "0644"
-  loop: "{{ files | default([]) }}"
+  loop: "{{ settings | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "output"

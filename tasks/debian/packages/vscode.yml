@@ -17,11 +17,18 @@
     dest: "/etc/apt/trusted.gpg.d/microsoft.asc"
     mode: "0644"
 
-- name: "Adding repository into sources list"
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/microsoft.asc] https://packages.microsoft.com/repos/code stable main"
-    filename: "vscode"
+- name: "Configuring VSCode repository"
+  ansible.builtin.deb822_repository:
+    name: "vscode"
     state: "present"
+    uris: "https://packages.microsoft.com/repos/code"
+    suites:
+      - "stable"
+    components:
+      - "main"
+    architectures:
+      - "amd64"
+    signed_by: "/etc/apt/trusted.gpg.d/microsoft.asc"
 
 - name: "Installing VS Code"
   ansible.builtin.import_role:
