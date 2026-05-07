@@ -1,6 +1,6 @@
 ---
 - name: "Trying to retrieve the password in order to verify if already exists or it has changed - '{{ password_id }}'"
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: "common"
     tasks_from: "debian/passwords/get"
 

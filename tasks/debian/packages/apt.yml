@@ -1,11 +1,13 @@
 ---
 - name: "Updating APT package cache"
-  when: update_cache is defined
+  when:
+    - update_cache is defined
   ansible.builtin.apt:
     update_cache: "{{ update_cache | default(true) }}"
 
 - name: "Upgrading all system packages to the latest version"
-  when: upgrade is defined
+  when:
+    - upgrade is defined
   ansible.builtin.apt:
     upgrade: "{{ upgrade | default('full') }}"
 
@@ -31,7 +33,9 @@
     autoremove: "{{ autoremove | default(omit) }}"
 
 - name: "Checking if a reboot is required after updates"
-  when: reboot_allowed is defined and reboot_allowed | bool
-  ansible.builtin.include_role:
+  when:
+    - reboot_allowed is defined
+    - reboot_allowed | bool
+  ansible.builtin.import_role:
     name: "common"
     tasks_from: "debian/os/reboot-if-required"

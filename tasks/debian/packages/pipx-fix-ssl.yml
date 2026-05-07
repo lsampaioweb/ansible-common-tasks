@@ -18,7 +18,8 @@
       register: "certifi_dirs"
 
     - name: "Linking system certificates to pipx environments"
-      when: certifi_dirs.results | default([]) | map(attribute='files') | flatten | length > 0
+      when:
+        - certifi_dirs.results | default([]) | map(attribute='files') | flatten | length > 0
       ansible.builtin.file:
         src: "/etc/ssl/certs/ca-certificates.crt"
         dest: "{{ item.path }}/cacert.pem"

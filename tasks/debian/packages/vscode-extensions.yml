@@ -9,11 +9,11 @@
 - name: "Installing desired VSCode extensions"
   # This is the key to idempotency:
   # The task only runs if the extension name is NOT in the list we registered.
-  when: >
-    installed_vscode_extensions.stdout is defined and
-    item.name not in installed_vscode_extensions.stdout_lines
+  when:
+    - installed_vscode_extensions.stdout is defined
+    - item.name not in installed_vscode_extensions.stdout_lines
   ansible.builtin.command: "code --install-extension {{ item.name }}"
   loop: "{{ extensions | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  changed_when: false
+  changed_when: true

@@ -55,7 +55,8 @@
   ansible.builtin.meta: "flush_handlers"
 
 - name: "Setting the user variable if not defined"
-  when: user is not defined
+  when:
+    - user is not defined
   ansible.builtin.set_fact:
     user: "{{ lookup('env', 'USER') }}"
 

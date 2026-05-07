@@ -1,6 +1,7 @@
 ---
 - name: "Setting path for user's NSS certificate database"
-  when: nssdb_path is not defined
+  when:
+    - nssdb_path is not defined
   ansible.builtin.set_fact:
     nssdb_path: "{{ lookup('env', 'HOME') }}/.pki/nssdb"
 
@@ -10,14 +11,16 @@
   register: "nssdb_stat"
 
 - name: "Creating the folder '{{ nssdb_path }}'"
-  when: not nssdb_stat.stat.exists
+  when:
+    - not nssdb_stat.stat.exists
   ansible.builtin.file:
     path: "{{ nssdb_path }}"
     state: "directory"
     recurse: true
 
 - name: "Initializing an empty database at '{{ nssdb_path }}'"
-  when: not nssdb_stat.stat.exists
+  when:
+    - not nssdb_stat.stat.exists
   ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
   register: "output"
   changed_when: output.rc == 0
@@ -28,8 +31,21 @@
   loop: "{{ nssdb_certificates | default([]) }}"
   register: "nssdb_cert_stats"
 
+- name: "Checking if certificates already exist in '{{ nssdb_path }}'"
+  when:
+    - nssdb_cert_stats.results[idx].stat.exists
+  ansible.builtin.command: "certutil -L -d sql:{{ nssdb_path }} -n {{ item.name }}"
+  loop: "{{ nssdb_certificates | default([]) }}"
+  loop_control:
+    index_var: idx
+  register: "nssdb_existing_certs"
+  changed_when: false
+  failed_when: false
+
 - name: "Installing the certificates at '{{ nssdb_path }}'"
-  when: nssdb_cert_stats.results[idx].stat.exists
+  when:
+    - nssdb_cert_stats.results[idx].stat.exists
+    - nssdb_existing_certs.results[idx].rc != 0
   ansible.builtin.command: >
     certutil -A -d 'sql:{{ nssdb_path }}'
     -t '{{ item.trust }}'

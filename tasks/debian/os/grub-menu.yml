@@ -1,6 +1,7 @@
 ---
 - name: "Configuring GRUB boot menu"
-  when: grub_timeout is defined
+  when:
+    - grub_timeout is defined
   ansible.builtin.lineinfile:
     path: "/etc/default/grub"
     regexp: "{{ item.regexp }}"
