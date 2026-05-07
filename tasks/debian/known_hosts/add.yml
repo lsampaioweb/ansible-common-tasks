@@ -7,5 +7,7 @@
     key: "{{ host.key }}"
     hash_host: "{{ host.hash_host | default('false') }}"
     state: "{{ host.state | default('present') }}"
-  when: host.name | length > 0 and host.key | length > 0
+  when:
+    - host.name | length > 0
+    - host.key | length > 0
   register: "output"

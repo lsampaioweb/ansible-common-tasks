@@ -2,7 +2,7 @@
 - name: "Installing UFW package using common apt task"
   ansible.builtin.import_role:
     name: "common"
-    tasks_from: "debian/packages/apt.yml"
+    tasks_from: "debian/packages/apt"
   vars:
     packages:
       - { name: "ufw" }

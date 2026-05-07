@@ -1,5 +1,5 @@
 ---
-- name: "Ensure the .ssh directory exists"
+- name: "Ensuring the .ssh directory exists"
   run_once: true
   delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
@@ -22,9 +22,11 @@
 - name: "Printing the fingerprint (name and key)"
   ansible.builtin.debug:
     msg: "{{ fingerprints }}"
-  tags: "debug"
+  tags: ["never", "debug"]
 
-- name: "Ensure the fingerprint is present in the known_hosts file"
-  ansible.builtin.include_tasks: "{{ path_debian_known_hosts_add }}"
+- name: "Ensuring the fingerprint is present in the known_hosts file"
+  ansible.builtin.import_role:
+    name: "common"
+    tasks_from: "debian/known_hosts/add"
   vars:
     host: "{{ fingerprints }}"

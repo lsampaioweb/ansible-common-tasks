@@ -1,5 +1,5 @@
 ---
-- name: "Snap packages"
+- name: "Installing Snap packages"
   community.general.snap:
     name: "{{ item.name }}"
     classic: "{{ item.classic | default(omit) }}"

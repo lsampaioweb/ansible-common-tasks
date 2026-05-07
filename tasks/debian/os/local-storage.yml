@@ -83,7 +83,7 @@
     label: "{{ item.path }}"
 
 - name: "Mounting the logical volume"
-  ansible.builtin.mount:
+  ansible.posix.mount:
     path: "{{ item.path }}"
     src: "{{ item.src }}"
     fstype: "{{ item.fstype | default('ext4', true) }}"

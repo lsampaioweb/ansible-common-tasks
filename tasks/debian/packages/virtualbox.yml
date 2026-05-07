@@ -1,8 +1,8 @@
 ---
 - name: "Installing VirtualBox"
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: "common"
-    tasks_from: "debian/packages/apt.yml"
+    tasks_from: "debian/packages/apt"
   vars:
     update_cache: true
     packages:

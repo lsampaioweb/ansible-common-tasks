@@ -4,7 +4,7 @@
   register: "installed_vscode_extensions"
   changed_when: false
   # We ignore errors in case the 'code' command isn't available yet or if no extensions are installed.
-  ignore_errors: true
+  failed_when: false
 
 - name: "Installing desired VSCode extensions"
   # This is the key to idempotency:

@@ -45,5 +45,5 @@
   loop: "{{ active_connections.stdout_lines | default([]) }}"
   notify: "Restart NetworkManager"
 
-- name: "Force all notified handlers to run at this point"
+- name: "Forcing all notified handlers to run at this point"
   ansible.builtin.meta: "flush_handlers"

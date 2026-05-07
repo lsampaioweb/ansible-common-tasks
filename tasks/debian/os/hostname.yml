@@ -11,7 +11,7 @@
     # This regex finds the line that starts with 127.0.1.1
     regexp: '^127\.0\.1\.1.*'
     # This ensures the entire line is exactly what we want
-    line: "127.0.1.1      {{ hostname }}"
+    line: "127.0.1.1      {{ hostname }}{{ ('.' + domain) if domain is defined else '' }}  {{ hostname }}"
     owner: "root"
     group: "root"
     mode: "0644"
