@@ -1,10 +1,10 @@
 ---
-- name: "Ensure the pip package is installed"
+- name: "Ensuring the pip package is installed"
   ansible.builtin.pip:
     name: "pip"
     state: "present"
 
-- name: "Python packages"
+- name: "Installing Python packages"
   ansible.builtin.pip:
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
