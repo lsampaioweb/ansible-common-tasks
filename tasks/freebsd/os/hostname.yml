@@ -1,13 +1,15 @@
 ---
-- name: "Setting the name of the server"
-  when: (hostname is defined)
-  ansible.builtin.hostname:
-    name: "{{ hostname }}"
+- name: "Setting the hostname of the server"
+  when:
+    - hostname is defined
+  block:
+    - name: "Setting system hostname"
+      ansible.builtin.hostname:
+        name: "{{ hostname }}{{ ('.' + domain) if domain is defined else '' }}"
 
-- name: "Setting the hostname in the /etc/rc.conf"
-  when: (hostname is defined)
-  ansible.builtin.lineinfile:
-    path: "/etc/rc.conf"
-    regexp: "hostname="
-    line: "hostname={{ hostname }}"
-    state: "present"
+    - name: "Setting the hostname in the /etc/rc.conf"
+      ansible.builtin.lineinfile:
+        path: "/etc/rc.conf"
+        regexp: "hostname="
+        line: "hostname={{ hostname }}{{ ('.' + domain) if domain is defined else '' }}"
+        state: "present"

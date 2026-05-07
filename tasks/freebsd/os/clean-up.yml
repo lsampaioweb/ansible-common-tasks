@@ -18,7 +18,7 @@
     index_var: "index"
     label: "{{ index }} - {{ item.path }}"
 
-- name: "Searching for log and temp files that can be truncant its contents"
+- name: "Searching for log and temp files whose contents can be truncated"
   ansible.builtin.find:
     paths:
       - "/var/log"
@@ -29,13 +29,11 @@
   register: "temp_files_to_truncate"
 
 - name: "Truncating the log files"
-  ansible.builtin.shell: >-
-    # set -o pipefail && \
-    cat /dev/null > {{ item.path }}
-  args:
-    executable: "/bin/sh"
+  ansible.builtin.replace:
+    path: "{{ item.path }}"
+    regexp: '(?s).*'
+    replace: ''
   register: "output"
-  changed_when: output.rc == 0
   loop: "{{ temp_files_to_truncate.files | default([]) }}"
   loop_control:
     index_var: "index"

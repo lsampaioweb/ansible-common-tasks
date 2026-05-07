@@ -1,19 +1,19 @@
 ---
-- name: "Setting system hostname"
+- name: "Setting the hostname of the server"
   when:
     - hostname is defined
-  ansible.builtin.hostname:
-    name: "{{ hostname }}{{ ('.' + domain) if domain is defined else '' }}"
+  block:
+    - name: "Setting system hostname"
+      ansible.builtin.hostname:
+        name: "{{ hostname }}{{ ('.' + domain) if domain is defined else '' }}"
 
-- name: "Setting hostname in /etc/hosts"
-  when:
-    - hostname is defined
-  ansible.builtin.lineinfile:
-    path: "/etc/hosts"
-    # This regex finds the line that starts with 127.0.1.1
-    regexp: '^127\.0\.1\.1.*'
-    # This ensures the entire line is exactly what we want
-    line: "127.0.1.1      {{ hostname }}{{ ('.' + domain) if domain is defined else '' }}  {{ hostname }}"
-    owner: "root"
-    group: "root"
-    mode: "0644"
+    - name: "Setting the hostname in the /etc/hosts"
+      ansible.builtin.lineinfile:
+        path: "/etc/hosts"
+        # This regex finds the line that starts with 127.0.1.1
+        regexp: '^127\.0\.1\.1.*'
+        # This ensures the entire line is exactly what we want
+        line: "127.0.1.1      {{ hostname }}{{ ('.' + domain) if domain is defined else '' }}  {{ hostname }}"
+        owner: "root"
+        group: "root"
+        mode: "0644"

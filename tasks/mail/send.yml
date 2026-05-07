@@ -1,5 +1,6 @@
 ---
 - name: "Sending an email: {{ mail_subject }}"
+  no_log: "{{ not debug | default(true) }}"
   community.general.mail:
     host: "{{ mail_host | default('smtp.gmail.com', true) }}"
     port: "{{ mail_port | default(587, true) }}"

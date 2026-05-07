@@ -12,6 +12,6 @@
     inject_packages: "{{ item.inject_packages | default(omit) }}"
     index_url: "{{ item.index_url | default(omit) }}"
     executable: "{{ item.executable | default(lookup('pipe', 'which pipx')) }}"
-  loop: "{{ packages }}"
+  loop: "{{ packages | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
