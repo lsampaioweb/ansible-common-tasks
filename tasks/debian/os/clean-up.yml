@@ -18,17 +18,20 @@
     index_var: "index"
     label: "{{ index }} - {{ item.path }}"
 
-- name: "Cleaning cloud-init"
-  ansible.builtin.shell: >-
-    set -o pipefail; \
-    sudo cloud-init clean; \
-    sudo rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg; \
-    sudo sync
-  args:
-    executable: "/usr/bin/bash"
+- name: "Cleaning cloud-init data"
+  ansible.builtin.command: "cloud-init clean"
   register: "output"
   changed_when: output.rc == 0
-  failed_when: (output.rc != 0)
+  failed_when: output.rc != 0
+
+- name: "Removing cloud-init networking configuration file"
+  ansible.builtin.file:
+    path: "/etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg"
+    state: "absent"
+
+- name: "Syncing filesystems to disk"
+  ansible.builtin.command: "sync"
+  changed_when: false
 
 - name: "Removing the history of terminal commands"
   ansible.builtin.shell: >-
