@@ -15,4 +15,6 @@
     global: "{{ item.global | default(true) }}"
     executable: "{{ item.executable | default(pipx_executable, true) | default(omit) }}"
   loop: "{{ packages | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "output"

@@ -6,4 +6,5 @@
   vars:
     update_cache: true
     packages:
-      - {name: "rsyslog", state: "latest"}
+      - name: "rsyslog"
+        state: "latest"

@@ -5,12 +5,13 @@
     tasks_from: "debian/passwords/get"
 
 - name: "Adding the password into the Secret Manager - '{{ password_id }}'"
+  when: (output.rc == 1 or output.stdout != password)
   become: false
-  no_log: "{{ not debug | default(true) }}"
+  no_log: "{{ not (debug | default(false)) }}"
+  # No native Ansible module exists for secret-tool.
   ansible.builtin.command: "secret-tool store --label='{{ password_id }}' password {{ password_id }}"
   args:
     stdin: "{{ password }}"
     stdin_add_newline: false
   register: "output"
   changed_when: output.rc == 0
-  when: (output.rc == 1 or output.stdout != password)

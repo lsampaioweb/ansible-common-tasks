@@ -6,7 +6,9 @@
   vars:
     update_cache: true
     packages:
-      - {name: "virtualbox", state: "latest", install_recommends: true}
+      - name: "virtualbox"
+        state: "latest"
+        install_recommends: true
 
 - name: "Setting the user variable if not defined"
   when:

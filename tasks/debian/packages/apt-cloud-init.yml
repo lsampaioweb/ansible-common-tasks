@@ -1,5 +1,6 @@
 ---
 - name: "Waiting for cloud-init / user-data to finish"
+  # No native Ansible module exists for cloud-init status --wait.
   ansible.builtin.command:
     cmd: "cloud-init status --wait"
   register: "cloud_init_status"
@@ -7,9 +8,13 @@
   failed_when: false
 
 - name: "Ensuring no other package operations are running"
+  # No native Ansible module exists to kill conflicting apt/dpkg processes.
   ansible.builtin.shell: |
+    set -o pipefail
     killall -q apt-get dpkg || true
     while fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done
+  args:
+    executable: "/usr/bin/bash"
   changed_when: false
 
 - name: "Removing apt lock files"

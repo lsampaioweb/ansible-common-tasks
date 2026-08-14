@@ -18,4 +18,6 @@
     comment: "{{ item.comment | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ rules | default([]) }}"
+  loop_control:
+    label: "{{ item.name | default(item.rule | default(item.direction)) }}"
   register: "output"

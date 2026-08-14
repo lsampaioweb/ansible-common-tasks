@@ -9,4 +9,6 @@
     name: "{{ item.name }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ packages | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "output"

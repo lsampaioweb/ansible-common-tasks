@@ -7,6 +7,8 @@
     group: "{{ item.group | default('root') }}"
     mode: "{{ item.mode | default('0644') }}"
   loop: "{{ jails | default([]) }}"
+  loop_control:
+    label: "{{ item.src }}"
   register: "output"
   # Notifying the handler ensures the service is restarted only if the config changes.
   notify:

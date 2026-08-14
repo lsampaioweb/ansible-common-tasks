@@ -8,4 +8,6 @@
     value: "{{ item.value | default(omit) }}"
     state: "{{ item.state | default(omit) }}"
   loop: "{{ config | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "output"

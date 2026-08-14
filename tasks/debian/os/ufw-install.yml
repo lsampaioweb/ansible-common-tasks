@@ -7,13 +7,17 @@
     packages:
       - { name: "ufw" }
 
-- name: "Setting UFW default policies and enabling logging"
+- name: "Setting UFW default policies and enabling logging" # noqa args[module]
   community.general.ufw:
     direction: "{{ item.direction }}"
     policy: "{{ item.policy }}"
   loop:
-    - { direction: "incoming", policy: "{{ ufw.default_incoming_policy | default('deny') }}" }
-    - { direction: "outgoing", policy: "{{ ufw.default_outgoing_policy | default('allow') }}" }
+    - direction: "incoming"
+      policy: "{{ ufw.default_incoming_policy | default('deny') }}"
+    - direction: "outgoing"
+      policy: "{{ ufw.default_outgoing_policy | default('allow') }}"
+  loop_control:
+    label: "{{ item.direction }}"
 
 - name: "Enabling and starting UFW service"
   community.general.ufw:

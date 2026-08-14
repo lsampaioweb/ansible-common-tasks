@@ -15,6 +15,8 @@
         patterns: "certifi"
         file_type: "directory"
       loop: "{{ site_packages_dirs.files | default([]) }}"
+      loop_control:
+        label: "{{ item.path }}"
       register: "certifi_dirs"
 
     - name: "Linking system certificates to pipx environments"
@@ -26,4 +28,6 @@
         state: "link"
         force: true
       loop: "{{ certifi_dirs.results | default([]) | map(attribute='files') | flatten }}"
+      loop_control:
+        label: "{{ item.path }}"
       register: "result"

@@ -21,23 +21,28 @@
 - name: "Initializing an empty database at '{{ nssdb_path }}'"
   when:
     - not nssdb_stat.stat.exists
+  # No native Ansible module exists for certutil.
   ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "nssdb_result"
+  changed_when: nssdb_result.rc == 0
 
 - name: "Checking if certificate files exist"
   ansible.builtin.stat:
     path: "{{ item.path }}"
   loop: "{{ nssdb_certificates | default([]) }}"
+  loop_control:
+    label: "{{ item.name }}"
   register: "nssdb_cert_stats"
 
 - name: "Checking if certificates already exist in '{{ nssdb_path }}'"
   when:
     - nssdb_cert_stats.results[idx].stat.exists
+  # No native Ansible module exists for certutil.
   ansible.builtin.command: "certutil -L -d sql:{{ nssdb_path }} -n {{ item.name }}"
   loop: "{{ nssdb_certificates | default([]) }}"
   loop_control:
     index_var: idx
+    label: "{{ item.name }}"
   register: "nssdb_existing_certs"
   changed_when: false
   failed_when: false
@@ -46,6 +51,7 @@
   when:
     - nssdb_cert_stats.results[idx].stat.exists
     - nssdb_existing_certs.results[idx].rc != 0
+  # No native Ansible module exists for certutil.
   ansible.builtin.command: >
     certutil -A -d 'sql:{{ nssdb_path }}'
     -t '{{ item.trust }}'
@@ -54,6 +60,7 @@
   loop: "{{ nssdb_certificates | default([]) }}"
   loop_control:
     index_var: idx
+    label: "{{ item.name }}"
   register: "output"
   changed_when: output.rc == 0
   failed_when: (output.rc != 0)

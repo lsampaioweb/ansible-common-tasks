@@ -7,10 +7,10 @@
     update_cache: true
     upgrade: "safe"
     packages:
-      - {name: "apt-transport-https"}
-      - {name: "ca-certificates"}
-      - {name: "curl"}
-      - {name: "software-properties-common"}
+      - { name: "apt-transport-https" }
+      - { name: "ca-certificates" }
+      - { name: "curl" }
+      - { name: "software-properties-common" }
 
 - name: "Setting Docker GPG key path"
   ansible.builtin.set_fact:
@@ -42,12 +42,15 @@
     tasks_from: "debian/packages/apt"
   vars:
     packages:
-      - {name: "docker-ce", install_recommends: true}
-      - {name: "docker-ce-cli"}
-      - {name: "containerd.io"}
-      - {name: "docker-buildx-plugin"}
-      - {name: "docker-compose-plugin", autoremove: true, autoclean: true}
-      - {name: "docker-registry"}
+      - name: "docker-ce"
+        install_recommends: true
+      - name: "docker-ce-cli"
+      - name: "containerd.io"
+      - name: "docker-buildx-plugin"
+      - name: "docker-compose-plugin"
+        autoremove: true
+        autoclean: true
+      - name: "docker-registry"
   notify:
     - "Restarting and Enabling docker"
 

@@ -5,7 +5,7 @@
       - "/var/log"
       - "/var/tmp"
       - "/tmp"
-    patterns: '*.gz,*.log.*'
+    patterns: "*.gz,*.log.*"
     recurse: true
   register: "temp_files_to_delete"
 
@@ -19,10 +19,11 @@
     label: "{{ index }} - {{ item.path }}"
 
 - name: "Cleaning cloud-init data"
+  # No native Ansible module exists for cloud-init clean.
   ansible.builtin.command: "cloud-init clean"
-  register: "output"
-  changed_when: output.rc == 0
-  failed_when: output.rc != 0
+  register: "cloud_init_result"
+  changed_when: cloud_init_result.rc == 0
+  failed_when: cloud_init_result.rc != 0
 
 - name: "Removing cloud-init networking configuration file"
   ansible.builtin.file:
@@ -30,16 +31,18 @@
     state: "absent"
 
 - name: "Syncing filesystems to disk"
+  # No native Ansible module exists for sync.
   ansible.builtin.command: "sync"
   changed_when: false
 
 - name: "Removing the history of terminal commands"
+  # No native Ansible module exists to clear Bash history.
   ansible.builtin.shell: >-
     set -o pipefail; \
     history -cw; \
     echo > ~/.bash_history
   args:
     executable: "/usr/bin/bash"
-  register: "output"
-  changed_when: output.rc == 0
-  failed_when: (output.rc != 0)
+  register: "history_result"
+  changed_when: history_result.rc == 0
+  failed_when: (history_result.rc != 0)

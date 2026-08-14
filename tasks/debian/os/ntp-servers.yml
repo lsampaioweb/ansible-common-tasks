@@ -6,8 +6,7 @@
     regexp: "NTP="
     line: "NTP={{ (ntp_servers | default([])) | join(' ') }}"
     state: "present"
-  register: "output"
-  notify: "Restart Timesyncd"
+  notify: "Restarting Timesyncd"
 
 - name: "Setting up NTP Servers - Chronyd"
   when: (ntp_service is defined and ntp_service == "chrony")
@@ -16,6 +15,7 @@
     insertafter: "# Use Debian"
     line: "{{ item.line }}"
     state: "{{ item.state }}"
-  register: "output"
   loop: "{{ ntp_servers | default([]) }}"
-  notify: "Restart Chronyd"
+  loop_control:
+    label: "{{ item.state }}: {{ item.line }}"
+  notify: "Restarting Chronyd"
