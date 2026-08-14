@@ -1,60 +1,58 @@
 ---
-- name: "Apply sysctl configuration"
+- name: "Applying sysctl configuration"
+  # No native Ansible module exists for sysctl --system (full reload).
   ansible.builtin.command: "/sbin/sysctl --system"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "sysctl_result"
+  changed_when: sysctl_result.rc == 0
 
-- name: "Update Grub"
+- name: "Updating Grub"
+  # No native Ansible module exists for update-grub.
   ansible.builtin.command: "update-grub"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "grub_result"
+  changed_when: grub_result.rc == 0
 
-- name: "Reconfigure Timezone"
+- name: "Reconfiguring Timezone"
+  # No native Ansible module exists for dpkg-reconfigure tzdata.
   ansible.builtin.command: "dpkg-reconfigure --frontend noninteractive tzdata"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "tz_result"
+  changed_when: tz_result.rc == 0
 
-- name: "Restart Timesyncd"
+- name: "Restarting Timesyncd"
   ansible.builtin.systemd:
     name: "systemd-timesyncd"
     state: "restarted"
-  register: "output"
 
-- name: "Restart Chronyd"
+- name: "Restarting Chronyd"
   ansible.builtin.systemd:
     name: "chronyd"
     state: "restarted"
-  register: "output"
 
-- name: "Restart Systemd-Resolved"
+- name: "Restarting Systemd-Resolved"
   ansible.builtin.systemd:
     name: "systemd-resolved"
     state: "restarted"
-  register: "output"
 
-- name: "Restart Xrdp"
+- name: "Restarting Xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
     enabled: true
-  register: "output"
 
-- name: "Restart Bind9"
+- name: "Restarting Bind9"
   ansible.builtin.systemd:
     name: "bind9"
     state: "restarted"
     enabled: true
-  register: "output"
 
-- name: "Restart Chrony"
+- name: "Restarting Chrony"
   ansible.builtin.systemd:
     name: "chrony"
     state: "restarted"
     enabled: true
-  register: "output"
 
-- name: "Enable Packer autocomplete"
+- name: "Enabling Packer autocomplete"
   become: false
+  # No native Ansible module exists for packer autocomplete installation.
   ansible.builtin.command: "packer -autocomplete-install"
   register: "autocomplete_output"
   failed_when:
@@ -63,8 +61,9 @@
   changed_when:
     - autocomplete_output.rc == 0
 
-- name: "Enable Terraform autocomplete"
+- name: "Enabling Terraform autocomplete"
   become: false
+  # No native Ansible module exists for terraform autocomplete installation.
   ansible.builtin.command: "terraform -install-autocomplete"
   register: "autocomplete_output"
   failed_when:
@@ -73,7 +72,7 @@
   changed_when:
     - autocomplete_output.rc == 0
 
-- name: "Reboot host"
+- name: "Rebooting host"
   ansible.builtin.reboot:
     msg: "Reboot initiated by Ansible"
     connect_timeout: 5
@@ -81,57 +80,54 @@
     pre_reboot_delay: 0
     post_reboot_delay: 10
     test_command: "whoami"
-  register: "output"
 
-- name: "Restart network"
+- name: "Restarting network"
   ansible.builtin.systemd:
     name: "networking"
     state: "restarted"
-  poll: 1
+  poll: 0
   async: 60
-  register: "output"
 
-- name: "Restart NetworkManager"
+- name: "Restarting NetworkManager"
   ansible.builtin.systemd:
     name: "NetworkManager"
     state: "restarted"
-  poll: 1
+  poll: 0
   async: 60
-  register: "output"
 
-- name: "Reload network"
+- name: "Reloading network"
+  # No native Ansible module exists for ifreload.
   ansible.builtin.command: "ifreload -a"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "reload_result"
+  changed_when: reload_result.rc == 0
 
-- name: "Wait for the network device to reload"
+- name: "Waiting for the network device to reload"
   ansible.builtin.wait_for_connection:
     delay: 1
-  register: "output"
 
 - name: "Updating the CA list - Debian"
+  # No native Ansible module exists for update-ca-certificates.
   ansible.builtin.command: "update-ca-certificates"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "ca_list_result"
+  changed_when: ca_list_result.rc == 0
 
-- name: "Update CA Certificates FreeBSD"
+- name: "Updating CA Certificates FreeBSD"
+  # No native Ansible module exists for certctl rehash.
   ansible.builtin.command: "certctl rehash"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "ca_update_result"
+  changed_when: ca_update_result.rc == 0
 
 - name: "Restarting and Enabling fail2ban"
   ansible.builtin.systemd:
     name: "fail2ban"
     state: "restarted"
     enabled: true
-  register: "output"
 
 - name: "Restarting the SSH server"
   ansible.builtin.systemd:
     name: "ssh"
     state: "restarted"
     enabled: true
-  register: "output"
   failed_when: false
 
 - name: "Restarting and Enabling docker"
@@ -139,10 +135,10 @@
     name: "docker"
     state: "restarted"
     enabled: true
-  register: "output"
 
-- name: "Refresh ~/.bashrc"
+- name: "Refreshing ~/.bashrc"
   become: false
+  # No native Ansible module exists to source a shell init file.
   ansible.builtin.shell: >-
     set -o pipefail && \
     source ~/.bashrc
@@ -156,23 +152,23 @@
     name: "keepalived"
     state: "restarted"
     enabled: true
-  register: "output"
 
-- name: "Restart qemu-guest-agent"
+- name: "Restarting qemu-guest-agent"
   ansible.builtin.systemd:
     name: "qemu-guest-agent"
     state: "started"
     enabled: true
-  register: "output"
 
-- name: "Netplan Apply"
+- name: "Applying Netplan"
+  # No native Ansible module exists for netplan apply.
   ansible.builtin.command: "netplan apply"
   poll: 1
   async: 60
-  register: "output"
-  changed_when: output.rc == 0
+  register: "netplan_result"
+  changed_when: netplan_result.rc == 0
 
-- name: "Start gnome-keyring-daemon"
+- name: "Starting gnome-keyring-daemon"
+  # No native Ansible module exists for gnome-keyring-daemon.
   ansible.builtin.command: "gnome-keyring-daemon --start --components=secrets,ssh"
-  register: "output"
-  changed_when: output.rc == 0
+  register: "keyring_result"
+  changed_when: keyring_result.rc == 0
