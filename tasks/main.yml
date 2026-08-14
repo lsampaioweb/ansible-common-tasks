@@ -1,0 +1,5 @@
+---
+# This is the common role entry point that orchestrates OS-specific tasks.
+# Actual implementation is delegated to OS-specific task files.
+- name: "Running OS-specific common configuration"
+  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] | lower }}/main.yml"
