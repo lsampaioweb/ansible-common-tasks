@@ -1,6 +1,6 @@
 ---
 - name: "Sending an email: {{ mail_subject }}"
-  no_log: "{{ not debug | default(true) }}"
+  no_log: "{{ not (debug | default(false)) }}"
   community.general.mail:
     host: "{{ mail_host | default('smtp.gmail.com', true) }}"
     port: "{{ mail_port | default(587, true) }}"
@@ -18,4 +18,6 @@
 
     subject: "{{ mail_subject }}"
     subtype: "{{ mail_subtype | default('html', true) }}"
-    body: "{{ mail_body | default(lookup('ansible.builtin.template', mail_body_file), true) }}"
+    body: "{{ mail_body_rendered }}"
+  vars:
+    mail_body_rendered: "{{ mail_body | default(lookup('ansible.builtin.template', mail_body_file), true) }}"
