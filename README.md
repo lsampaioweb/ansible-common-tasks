@@ -21,7 +21,7 @@ This role provides modular, idempotent task collections for system administratio
 
 ## Usage
 
-Import specific task files from this role using `import_role` with `tasks_from`:
+This role is designed for reusability across other Ansible roles. Import specific task files from this role using `import_role` with `tasks_from`. The role is registered in Ansible Galaxy as `lsampaioweb.common`.
 
 ```yaml
 - name: "Install APT packages"
@@ -34,6 +34,23 @@ Import specific task files from this role using `import_role` with `tasks_from`:
       - { name: "git" }
     update_cache: true
 ```
+
+## Role Metadata
+
+This role includes Galaxy-compliant metadata in `meta/main.yml`:
+
+```yaml
+---
+galaxy_info:
+  role_name: common
+  namespace: lsampaioweb
+  author: Luciano Sampaio
+  description: Shared OS-level utilities imported via tasks_from by other roles.
+  license: MIT
+  min_ansible_version: "2.10"
+```
+
+The role identity is `lsampaioweb.common`. Run `ansible-lint --profile production` to validate Galaxy compliance before publishing or updating the role.
 
 ## Task Areas
 
