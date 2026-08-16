@@ -3,8 +3,8 @@
   when:
     - host.name | length > 0
     - host.key | length > 0
-  delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
+  delegate_to: "{{ delegate_to | default('localhost') }}"
   ansible.builtin.known_hosts:
     name: "{{ host.name }}"
     key: "{{ host.key }}"
