@@ -1,8 +1,8 @@
 ---
 - name: "Ensuring the .ssh directory exists"
-  run_once: true
-  delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
+  delegate_to: "{{ delegate_to | default('localhost') }}"
+  run_once: true
   ansible.builtin.file:
     path: "~/.ssh/"
     state: "directory"
