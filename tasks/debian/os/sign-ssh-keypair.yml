@@ -19,6 +19,7 @@
   loop: "{{ ssh_key_types | default([]) }}"
 
 - name: "Signing the Host OpenSSH keypair with the CA key"
+  # Required: inventory group 'ssh_signer' must contain at least one host to sign certificates.
   delegate_to: "{{ ssh_signer_host | default(groups['ssh_signer'] | first) }}"
   community.crypto.openssh_cert:
     type: "host"
