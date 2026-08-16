@@ -26,7 +26,6 @@
   loop_control:
     label: "{{ item.name }}"
   register: "apt_operation_result"
-  notify: "{{ item.handler_to_notify | default(omit) }}"
 
 - name: "Removing dependencies that are no longer required and unnecessary packages from the cache"
   when: (autoclean is defined) or (autoremove is defined)
