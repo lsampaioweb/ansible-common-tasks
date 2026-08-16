@@ -128,7 +128,6 @@
     name: "ssh"
     state: "restarted"
     enabled: true
-  failed_when: false
 
 - name: "Restarting and Enabling docker"
   ansible.builtin.systemd:

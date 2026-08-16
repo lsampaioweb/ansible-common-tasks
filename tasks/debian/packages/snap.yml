@@ -8,4 +8,4 @@
   loop: "{{ packages | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "snap_installation_result"

@@ -20,5 +20,5 @@
       after: "GRUB_TIMEOUT="
   loop_control:
     label: "{{ item.line }}"
-  register: "output"
+  register: "grub_menu_update"
   notify: "Updating Grub"

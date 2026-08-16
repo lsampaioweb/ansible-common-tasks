@@ -13,5 +13,5 @@
   args:
     stdin: "{{ password }}"
     stdin_add_newline: false
-  register: "output"
+  register: "password_storage_result"
   changed_when: output.rc == 0

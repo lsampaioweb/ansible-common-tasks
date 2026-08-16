@@ -22,11 +22,11 @@
     autoclean: "{{ item.autoclean | default(omit) }}"
     autoremove: "{{ item.autoremove | default(omit) }}"
     purge: "{{ item.purge | default(omit) }}"
-  notify: "{{ item.handler_to_notify | default(omit) }}"
   loop: "{{ packages | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "apt_operation_result"
+  notify: "{{ item.handler_to_notify | default(omit) }}"
 
 - name: "Removing dependencies that are no longer required and unnecessary packages from the cache"
   when: (autoclean is defined) or (autoremove is defined)

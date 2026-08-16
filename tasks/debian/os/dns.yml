@@ -5,4 +5,4 @@
     regexp: "search"
     line: "search {{ domain | default('.') }}"
     state: "present"
-  register: "output"
+  register: "dns_config_result"

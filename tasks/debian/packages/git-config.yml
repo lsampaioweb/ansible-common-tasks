@@ -10,4 +10,4 @@
   loop: "{{ config | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "git_config_result"

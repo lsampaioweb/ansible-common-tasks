@@ -14,4 +14,4 @@
   loop: "{{ settings | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "vscode_settings_result"

@@ -17,4 +17,4 @@
   loop: "{{ packages | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "pipx_installation_result"

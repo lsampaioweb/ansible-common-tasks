@@ -4,6 +4,6 @@
   become: false
   # No native Ansible module exists for secret-tool.
   ansible.builtin.command: "secret-tool lookup password {{ password_id }}"
-  register: "output"
+  register: "password_retrieval_result"
   failed_when: false
   changed_when: false
