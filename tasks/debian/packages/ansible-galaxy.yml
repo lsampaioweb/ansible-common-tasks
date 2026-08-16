@@ -12,4 +12,4 @@
   loop: "{{ packages | default([]) }}"
   loop_control:
     label: "{{ item.name }}"
-  register: "output"
+  register: "galaxy_installation_result"

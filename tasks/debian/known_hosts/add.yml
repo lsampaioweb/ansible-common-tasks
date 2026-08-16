@@ -10,4 +10,4 @@
     key: "{{ host.key }}"
     hash_host: "{{ host.hash_host | default('false') }}"
     state: "{{ host.state | default('present') }}"
-  register: "output"
+  register: "known_hosts_addition_result"

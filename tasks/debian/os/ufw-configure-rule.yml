@@ -20,4 +20,4 @@
   loop: "{{ rules | default([]) }}"
   loop_control:
     label: "{{ item.name | default(item.rule | default(item.direction)) }}"
-  register: "output"
+  register: "ufw_rule_result"

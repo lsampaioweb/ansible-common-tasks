@@ -2,5 +2,5 @@
 - name: "Setting timezone to {{ timezone }}"
   community.general.timezone:
     name: "{{ timezone }}"
-  register: "output"
+  register: "timezone_update"
   notify: "Reconfiguring Timezone"

@@ -9,7 +9,7 @@
   loop: "{{ jails | default([]) }}"
   loop_control:
     label: "{{ item.src }}"
-  register: "output"
+  register: "fail2ban_jail_copy_result"
   # Notifying the handler ensures the service is restarted only if the config changes.
   notify:
     - "Restarting and Enabling fail2ban"

@@ -4,5 +4,5 @@
     path: "/etc/default/grub"
     regexp: '^GRUB_CMDLINE_LINUX="(?!net\.ifnames=0 biosdevname=0)(.*)"$'
     replace: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 \1"'
-  register: "output"
+  register: "grub_netnames_update"
   notify: "Updating Grub"

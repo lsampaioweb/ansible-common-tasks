@@ -9,7 +9,7 @@
       name: "{{ desired_settings.name }}"
       dns_entry: "{{ desired_settings.dns_entry }}"
   failed_when: false
-  register: "output"
+  register: "dns_entry_config_result"
 
 - name: "Debugging output from DNS entry"
   ansible.builtin.debug:

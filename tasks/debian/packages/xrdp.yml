@@ -15,7 +15,7 @@
       export GNOME_SHELL_SESSION_MODE=ubuntu
       export XDG_CURRENT_DESKTOP=ubuntu:GNOME
       export XDG_SESSION_TYPE=x11
-  register: "output"
+  register: "xrdp_usergroup_result"
   notify: "Restarting Xrdp"
 
 - name: "Copying allow color managed device file to the target host"

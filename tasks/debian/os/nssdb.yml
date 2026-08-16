@@ -61,6 +61,6 @@
   loop_control:
     index_var: idx
     label: "{{ item.name }}"
-  register: "output"
+  register: "nssdb_cert_check_result"
   changed_when: output.rc == 0
   failed_when: (output.rc != 0)
