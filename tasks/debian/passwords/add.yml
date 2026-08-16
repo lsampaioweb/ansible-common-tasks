@@ -6,10 +6,10 @@
 
 - name: "Adding the password into the Secret Manager - '{{ password_id }}'"
   when: (output.rc == 1 or output.stdout != password)
-  become: false
   no_log: "{{ not (debug | default(false)) }}"
   # No native Ansible module exists for secret-tool.
   ansible.builtin.command: "secret-tool store --label='{{ password_id }}' password {{ password_id }}"
+  become: false
   args:
     stdin: "{{ password }}"
     stdin_add_newline: false

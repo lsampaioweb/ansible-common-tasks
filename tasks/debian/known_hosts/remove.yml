@@ -2,7 +2,7 @@
 - name: "Removing the fingerprint from the know_hosts file"
   when:
     - host.name | length > 0
-  delegate_to: "{{ delegate_to_host | default(omit) }}"
+  delegate_to: "{{ delegate_to | default(omit, true) }}"
   become: "{{ become | default(false) }}"
   ansible.builtin.known_hosts:
     name: "{{ host.name }}"
