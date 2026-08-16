@@ -1,0 +1,52 @@
+---
+description: "Role governance contract for Ansible roles, including directory ownership, task composition, and variable boundaries."
+applyTo: "**/roles/**"
+---
+
+# Ansible Role Governance
+
+## Dependencies
+
+- For task-execution conventions (idempotency, variable passing, and `changed_when`/`failed_when` keys), defer to `ansible-playbook-style.instructions.md`.
+
+## Naming Conventions
+
+- Name role directories with lowercase snake_case.
+- Name role task files with lowercase kebab-case or snake_case.
+- Use one casing convention consistently within each role.
+- Name variable keys with lowercase snake_case.
+
+## Rules
+
+### Directory ownership
+- Keep each role self-contained with `tasks`, `vars`, `handlers`, `templates`, `files`, and `meta` directories as needed.
+- Keep `tasks/main.yml` as the role entry point that orchestrates internal task files.
+- Keep template rendering in `templates/*.j2` and static artifacts in `files/`.
+- Keep OS-specific task trees under `tasks/<os_family>/` (for example `tasks/debian/`, `tasks/ol9/`, `tasks/windows/`).
+- Keep reusable cross-role utilities as importable task files in a dedicated `common` role.
+- Declare role dependencies and Galaxy collection requirements in `meta/main.yml`.
+
+### Variable boundaries
+- Keep role defaults and vars scoped to the role.
+- Use `defaults/main.yml` for values that callers should be able to override via group_vars, host_vars, or playbook vars.
+- Use `vars/main.yml` for role-internal constants that must not be overridden by callers.
+- Keep host- or environment-wide values in `group_vars` or role `vars` files.
+- Reference group_vars values through named variables, not through direct lookup calls inside roles.
+
+### Handlers
+- Use handlers for restart, reload, and flush operations.
+- Define all role handlers in `handlers/main.yml`.
+- Keep handler names unique across the entire play scope.
+- Trigger handlers through `notify`.
+
+### Cross-role reuse
+- Keep cross-role reuse explicit through `import_role` or `include_role`.
+- Use `tasks_from` on `import_role`/`include_role` to target a specific task file.
+
+## Safety Guards
+
+- Never restart services directly in task bodies when a handler can manage the restart.
+- Never copy tasks from one role into another.
+- Never place secrets directly in role task files, templates, or static files.
+- Never perform irreversible state changes in a role without a scoped condition or explicit user intent.
+- Never use bare variable references without `default([])` or `default(omit, true)` guards in loops and optional parameters.
