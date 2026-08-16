@@ -18,8 +18,8 @@
 - name: "Commenting out IPv6 entries in /etc/hosts"
   ansible.builtin.replace:
     path: "/etc/hosts"
-    regexp: '^([^#\n]*[:]{2}.*)$'
-    replace: '#\1'
+    regexp: "^([^#\\n]*[:]{2}.*)$"
+    replace: "#\\1"
 
 - name: "Populating service facts"
   ansible.builtin.service_facts:

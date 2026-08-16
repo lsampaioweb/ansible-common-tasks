@@ -37,4 +37,4 @@
   vars:
     update_cache: true
     packages:
-      - {name: "code"}
+      - { name: "code" }

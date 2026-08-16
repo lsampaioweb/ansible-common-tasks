@@ -5,7 +5,7 @@
       - "/var/log"
       - "/var/tmp"
       - "/tmp"
-    patterns: '*.gz,*.log.*'
+    patterns: "*.gz,*.log.*"
     recurse: true
   register: "temp_files_to_delete"
 
@@ -24,15 +24,15 @@
       - "/var/log"
       - "/var/tmp"
       - "/tmp"
-    patterns: '*.log'
+    patterns: "*.log"
     recurse: true
   register: "temp_files_to_truncate"
 
 - name: "Truncating the log files"
   ansible.builtin.replace:
     path: "{{ item.path }}"
-    regexp: '(?s).*'
-    replace: ''
+    regexp: "(?s).*"
+    replace: ""
   register: "output"
   loop: "{{ temp_files_to_truncate.files | default([]) }}"
   loop_control:
