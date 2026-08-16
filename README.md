@@ -1,6 +1,6 @@
 # Ansible Common Tasks
 
-A reusable Ansible role providing OS-level utilities and system configuration tasks for multiple operating systems. This role is designed to be consumed by other roles via `import_role` with `tasks_from` to import specific task groups.
+A reusable Ansible role providing OS-level utilities and system configuration tasks for multiple operating systems. This role is designed to be consumed by other roles via `import_role` or `include_role` with `tasks_from`, depending on whether loading can be static or must be runtime.
 
 ## Overview
 
@@ -21,7 +21,7 @@ This role provides modular, idempotent task collections for system administratio
 
 ## Usage
 
-This role is designed for reusability across other Ansible roles. Import specific task files from this role using `import_role` with `tasks_from`. The role is registered in Ansible Galaxy as `lsampaioweb.common`.
+This role is designed for reusability across other Ansible roles. Prefer `import_role` with `tasks_from` for static composition and use `include_role` when runtime variables determine task behavior. The role is registered in Ansible Galaxy as `lsampaioweb.common`.
 
 ```yaml
 - name: "Install APT packages"
