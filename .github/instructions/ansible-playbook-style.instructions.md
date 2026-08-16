@@ -25,7 +25,12 @@ applyTo: "**/*.yml"
 - Nest a block inside another block when its `when` condition evaluates a registered variable produced by the outer block's tasks.
 
 ### Task key order
-- Keep task key order: `name` → `when` → `no_log` → module FQCN → `args`/`vars` → `loop`/`loop_control` → `register` → `changed_when`/`failed_when` → `notify`.
+- Keep task key order: `name` → `when` → `no_log` → `become` → `delegate_to` → `run_once` → `environment` → module FQCN → `args`/`vars` → `loop`/`loop_control` → `register` → `changed_when`/`failed_when` → `notify`.
+- Place `become` and `become_user` before the module to enable privilege escalation.
+- Place `delegate_to` before the module to target task execution on a different host.
+- Place `run_once: true` before the module for controller-side operations.
+- Place `environment` variables before the module when task-scoped environment variables are needed.
+- Omit keys that are not needed for the task; only include keys used in the task in the specified order.
 
 ### Import vs include policy
 - Use `ansible.builtin.import_tasks` for static task-file composition known at parse time.
@@ -60,6 +65,11 @@ applyTo: "**/*.yml"
 - Use `changed_when: false` on read-only probe tasks whose purpose is inspection, discovery, or status checks.
 - Keep the task `name` and any surrounding comment explicit enough to show that a `changed_when: false` command or shell task is a read-only probe.
 - Use `failed_when` as a list of conditions when failure semantics require multiple guards.
+- Use `failed_when: false` **only** when a follow-up task **immediately and unconditionally** validates or reports the result. Do not use it for optional/skippable error cases.
+  - **Good**: `failed_when: false` followed by a task that checks `rc` and decides whether to fail or continue
+  - **Good**: Reading from a system that may not exist (file, service, etc.), then checking if read succeeded
+  - **Bad**: `failed_when: false` without a clear validation task immediately after
+  - **Bad**: Suppressing errors as a substitute for proper error handling logic
 - Use `retries` with `until` and `delay` for tasks that poll for an eventual state.
 - Always set an explicit `retries` count on any task that uses `until`.
 - Use `ignore_errors: true` only when a follow-up task immediately evaluates or reports the failure.
@@ -76,8 +86,9 @@ applyTo: "**/*.yml"
 
 ### Variable and register conventions
 - Pass parameters to roles exclusively through `vars` on the `import_role` or `include_role` call.
-- Name `register` variables with a descriptive snake_case noun.
-- Use `output` as the register variable name only in generic pass-through task wrappers.
+- Name `register` variables with a descriptive snake_case noun that reflects the registered data or operation intent.
+- Use `output` as the register variable name **only** for true pass-through task wrappers where the task directly invokes a role and returns its result unchanged (example: importing a role that handles apt packages and returning the apt result as-is).
+- For most tasks, prefer descriptive names: `package_list`, `service_status`, `installed_extensions`, `reboot_required`, etc.
 - Use `r_<name>` as the register variable for intermediate results inside a block when the block promotes a cleaned result through `set_fact`.
 - Use `default(omit, true)` for optional module parameters that must be absent when the caller does not supply a value.
 - Guard variables that are unresolved during parser-only checks with `default(...)` when feasible so syntax-check remains actionable across inventories.

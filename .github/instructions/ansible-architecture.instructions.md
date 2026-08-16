@@ -32,6 +32,13 @@ applyTo: "**"
 - Keep playbooks idempotent so re-runs converge without unintended changes.
 - Keep every play result deterministic: tasks must reach `ok` or `skipped` on a second run with no `changed` state on the target.
 
+### Validation & Tooling
+- Require all code to pass `ansible-lint` with **0 failures, 0 warnings** in production profile before code is merged.
+- Maintain `.ansible-lint` configuration file in the project root with explicit `skip_list` and `warn_list` if project-specific exceptions are needed.
+- Run `yamllint` on all YAML files to enforce consistent formatting.
+- Validate YAML syntax on all playbooks and roles before committing.
+- Document all ansible-core and ansible-lint versions used in CI/CD or development setup to ensure consistent validation across environments.
+
 ## Safety Guards
 
 - Never substitute role-based task composition with ad-hoc shell script files.
