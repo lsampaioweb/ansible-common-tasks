@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: "absent"
-  loop: "{{ vscode_conflicting_sources }}"
+  loop: "{{ vscode_conflicting_sources | default([]) }}"
 
 - name: "Adding Microsoft signing key"
   ansible.builtin.get_url:

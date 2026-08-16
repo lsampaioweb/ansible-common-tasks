@@ -1,7 +1,7 @@
 ---
 # https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/password_lookup.html
 - name: "Generating a random password"
-  no_log: "{{ not debug | default(true) }}"
+  no_log: "{{ not (debug | default(false)) }}"
   ansible.builtin.set_fact:
     random_password: "{{ lookup('ansible.builtin.password', pass_dest, chars=pass_chars, length=pass_length) }}"
   vars:

@@ -7,7 +7,7 @@
     block: |
       alias copy='xclip -selection clipboard'
       alias paste='xclip -selection clipboard -o'
-  notify: "Refresh ~/.bashrc"
+  notify: "Refreshing ~/.bashrc"
 
 - name: "Setting up the forward of the display on SSH connections"
   ansible.builtin.lineinfile:

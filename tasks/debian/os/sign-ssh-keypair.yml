@@ -16,10 +16,10 @@
     src: "{{ ssh_path }}/ssh_host_{{ item }}_key.pub"
     dest: "{{ tmp_ssh_path }}/"
     flat: true
-  loop: "{{ ssh_key_types }}"
+  loop: "{{ ssh_key_types | default([]) }}"
 
 - name: "Signing the Host OpenSSH keypair with the CA key"
-  delegate_to: "{{ groups['ssh_signer'] | first }}"
+  delegate_to: "{{ ssh_signer_host | default(groups['ssh_signer'] | first) }}"
   community.crypto.openssh_cert:
     type: "host"
     signing_key: "{{ ca_host_private_key_path }}"
@@ -30,14 +30,14 @@
     valid_to: "{{ item.valid_to | default('forever') }}"
     principals: "{{ principals | default(omit) }}"
     state: "present"
-  loop: "{{ ssh_key_types }}"
   vars:
     principals: ["{{ hostname }}", "{{ hostname }}.{{ domain }}"]
+  loop: "{{ ssh_key_types | default([]) }}"
 
 - name: "Copying the signed SSH keys back to host"
   ansible.builtin.copy:
     src: "{{ tmp_ssh_path }}/ssh_host_{{ item }}_key-cert.pub"
     dest: "{{ ssh_path }}/"
     mode: "preserve"
-  loop: "{{ ssh_key_types }}"
+  loop: "{{ ssh_key_types | default([]) }}"
   notify: "Restarting the SSH server"

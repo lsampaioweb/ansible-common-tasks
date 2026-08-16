@@ -25,9 +25,14 @@
   vars:
     update_cache: true
     packages:
-      - {name: "packer", state: "latest", handler_to_notify: "Enable Packer autocomplete"}
-      - {name: "terraform", state: "latest", handler_to_notify: "Enable Terraform autocomplete"}
-      - {name: "vault", state: "latest"}
+      - name: "packer"
+        state: "latest"
+        handler_to_notify: "Enabling Packer autocomplete"
+      - name: "terraform"
+        state: "latest"
+        handler_to_notify: "Enabling Terraform autocomplete"
+      - name: "vault"
+        state: "latest"
 
 - name: "Forcing handler execution"
   ansible.builtin.meta: "flush_handlers"

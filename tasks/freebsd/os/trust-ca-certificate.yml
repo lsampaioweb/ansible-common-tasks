@@ -8,7 +8,7 @@
     src: "{{ ssl_certificate_path }}"
     dest: "{{ certificate_path }}"
     mode: "0644"
-  notify: "Update CA Certificates FreeBSD"
+  notify: "Updating CA Certificates FreeBSD"
 
 - name: "Forcing all notified handlers to run at this point"
   ansible.builtin.meta: "flush_handlers"

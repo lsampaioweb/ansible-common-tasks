@@ -6,4 +6,4 @@
   register: "reboot_required"
   changed_when: reboot_required.stat.exists
   notify:
-    - "Reboot host"
+    - "Rebooting host"

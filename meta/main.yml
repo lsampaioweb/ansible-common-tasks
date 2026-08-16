@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  author: Luciano Sampaio
+  description: Shared OS-level utilities imported via tasks_from by other roles.
+  license: MIT
+  min_ansible_version: "2.10"

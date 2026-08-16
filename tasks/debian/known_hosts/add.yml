@@ -1,5 +1,8 @@
 ---
 - name: "Adding the fingerprint into the know_hosts file"
+  when:
+    - host.name | length > 0
+    - host.key | length > 0
   delegate_to: "{{ delegate_to | default('localhost') }}"
   become: "{{ become | default(false) }}"
   ansible.builtin.known_hosts:
@@ -7,7 +10,4 @@
     key: "{{ host.key }}"
     hash_host: "{{ host.hash_host | default('false') }}"
     state: "{{ host.state | default('present') }}"
-  when:
-    - host.name | length > 0
-    - host.key | length > 0
   register: "output"
