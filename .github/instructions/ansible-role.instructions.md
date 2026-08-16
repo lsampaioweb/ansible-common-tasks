@@ -24,11 +24,25 @@ applyTo: "**/roles/**"
 - Keep template rendering in `templates/*.j2` and static artifacts in `files/`.
 - Keep OS-specific task trees under `tasks/<os_family>/` (for example `tasks/debian/`, `tasks/ol9/`, `tasks/windows/`).
 - Keep reusable cross-role utilities as importable task files in a dedicated `common` role.
-- Declare role dependencies and Galaxy collection requirements in `meta/main.yml`.
+- Declare role dependencies and Galaxy collection requirements in `meta/main.yml` with required fields: `role_name` and `namespace`.
+
+### Role Metadata (`meta/main.yml`)
+- Required structure:
+  ```yaml
+  ---
+  galaxy_info:
+    role_name: my_role        # lowercase, no hyphens; uniquely identifies role
+    namespace: my_namespace   # lowercase; DNS-style namespace for Galaxy
+    author: Author Name
+    description: "Role description"
+    license: MIT              # or applicable license
+    min_ansible_version: "2.10"
+  ```
+- Run `ansible-lint` to validate `meta/main.yml` for Galaxy compliance before marking role complete.
+- Do not assume default role name from directory; always explicitly declare `role_name` and `namespace`.
 
 ### Variable boundaries
 - Keep role defaults and vars scoped to the role.
-- Use `defaults/main.yml` for values that callers should be able to override via group_vars, host_vars, or playbook vars.
 - Use `vars/main.yml` for role-internal constants that must not be overridden by callers.
 - Keep host- or environment-wide values in `group_vars` or role `vars` files.
 - Reference group_vars values through named variables, not through direct lookup calls inside roles.

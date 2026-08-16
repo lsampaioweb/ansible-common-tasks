@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   role_name: common
-  namespace: thecodemaster
+  namespace: lsampaioweb
   author: Luciano Sampaio
   description: Shared OS-level utilities imported via tasks_from by other roles.
   license: MIT
