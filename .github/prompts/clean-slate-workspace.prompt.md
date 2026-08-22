@@ -1,6 +1,6 @@
 ---
 description: "Use to remove only this chat's created artifacts from the active workspace for a clean restart."
-argument-hint: "Optional: scope notes or exclusions"
+argument-hint: "Required: scope notes or exclusions; omit to clean all artifacts created in this chat."
 ---
 
 # Clean Slate Workspace Engine
@@ -21,7 +21,12 @@ argument-hint: "Optional: scope notes or exclusions"
 - Confirm no session-created files or empty directories remain after deletion.
 - If no session-created artifacts exist, state that explicitly and stop.
 
-## 3. Review Plan Layout
+## 3. Safety Guards
+- **Execution Boundary:** Delete only after the deletion target list is presented and the user explicitly confirms.
+- Never delete user-authored files or ambiguous-ownership artifacts.
+- Never modify persistent user-level memories or reusable customizations that were not created in this chat.
+
+## 4. Review Plan Layout
 Use this exact markdown schema:
 
 ### Scope
@@ -38,3 +43,6 @@ Use this exact markdown schema:
 
 ### Next Action
 - <single minimal next step or `none`>
+
+### Verdict
+- READY | NEEDS FIXES | BLOCKED

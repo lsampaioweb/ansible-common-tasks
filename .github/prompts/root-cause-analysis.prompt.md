@@ -16,9 +16,12 @@ argument-hint: "Required: error logs, stack traces, or terminal output."
 - Do not bypass visibility modifiers.
 - Do not suppress exceptions.
 - Do not inject unapproved dependencies.
-- Code fixes must adhere to packaging conventions and data-access patterns defined by the active project architecture.
+- Code fixes must adhere to packaging conventions defined by the active project architecture.
+- Code fixes must adhere to data-access patterns defined by the active project architecture.
 - Code fixes must respect dependency boundaries and detected runtime version constraints.
-- Implement structural corrections (e.g., correcting interface contracts, aligning data schemas, or fixing lifecycle and boundary violations).
+- Correct broken interface contracts when they cause the failure.
+- Align data schemas when schema mismatch causes the failure.
+- Fix lifecycle and boundary violations when they cause the failure.
 
 ## 3. Safety Guards
 - **Safety Gate:** If the root cause cannot be verified with high confidence, do not generate speculative code fixes.
@@ -50,3 +53,6 @@ Use this exact markdown schema:
 
 ### Next Action
 - <single minimal next step or `none`>
+
+### Verdict
+- READY | NEEDS FIXES | BLOCKED

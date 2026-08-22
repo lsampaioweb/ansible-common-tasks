@@ -45,3 +45,6 @@ Use this exact markdown schema:
 
 ### Next Action
 - <single minimal next step or `none`>
+
+### Verdict
+- READY | NEEDS FIXES | BLOCKED

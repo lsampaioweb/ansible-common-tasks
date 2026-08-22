@@ -17,7 +17,7 @@ applyTo: "**/*.j2"
 - Use the target file format's native comment syntax for comments that must appear in the rendered output.
 - Place `{% if %}`, `{% for %}`, `{% endif %}`, and `{% endfor %}` tags on their own lines.
 - Use `loop.last` and `loop.first` for conditional rendering inside loops.
-- Resolve complex expressions in task `vars:` before passing to the template.
+- Resolve complex expressions in task `vars:` before passing to the template (including lookups, jinja2 filters, or multi-step variable derivations).
 
 ## Safety Guards
 
