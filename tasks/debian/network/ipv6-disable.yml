@@ -25,10 +25,12 @@
   ansible.builtin.service_facts:
 
 - name: "Getting active network connection name"
+  when:
+    - ansible_facts.services["NetworkManager.service"] is defined
+    - ansible_facts.services["NetworkManager.service"].state == "running"
   # No native Ansible module exists for nmcli connection status queries.
   ansible.builtin.command: "/usr/bin/nmcli -t -f NAME c show --active"
   register: "active_connections"
-  failed_when: false
   changed_when: false
 
 - name: "Disabling IPv6 in NetworkManager (Desktop)"
