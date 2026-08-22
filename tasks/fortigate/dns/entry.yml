@@ -13,7 +13,7 @@
 
 - name: "Debugging output from DNS entry"
   ansible.builtin.debug:
-    msg: "{{ output }}"
+    msg: "{{ dns_entry_config_result }}"
   tags: ["never", "debug"]
 
 - name: "Initializing DNS failure conditions list"
@@ -22,10 +22,10 @@
 
 - name: "Collecting conditions for failing (not success and not 404)"
   when:
-    - output.meta is defined
+    - dns_entry_config_result.meta is defined
   ansible.builtin.set_fact:
     fail_conditions: "{{ fail_conditions + [result.status != 'success' and result.http_status != 404] }}"
-  loop: "{{ output.meta | default([]) }}"
+  loop: "{{ dns_entry_config_result.meta | default([]) }}"
   loop_control:
     loop_var: "result"
     label: "{{ result.object_path }}"

@@ -30,4 +30,4 @@
       loop: "{{ certifi_dirs.results | default([]) | map(attribute='files') | flatten }}"
       loop_control:
         label: "{{ item.path }}"
-      register: "result"
+      register: "cert_link_result"
