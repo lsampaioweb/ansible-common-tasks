@@ -10,6 +10,7 @@ applyTo: "**/ansible.cfg"
 - Place `[defaults]` before `[ssh_connection]`.
 - Place any project-specific sections after the standard sections.
 - Write `# <reason>` comments on the line above the key they document.
+- Use backticks when referencing section names in prose: `` `[defaults]` ``, `` `[ssh_connection]` ``.
 
 ## Rules
 
@@ -25,11 +26,11 @@ applyTo: "**/ansible.cfg"
 
 ### Callbacks and profiling
 - Set `callbacks_enabled = timer, profile_roles` as the baseline for all projects.
-- Add project-specific plugins to `callbacks_enabled` only when justified.
+- Add project-specific plugins to `callbacks_enabled` only when the plugin provides observability or profiling value specific to your playbook domain (for example, `profile_tasks` for task-level timing diagnostics).
 
 ### Fact caching
 - Set `fact_caching`, `fact_caching_connection`, and `fact_caching_timeout` explicitly when the project benefits from caching.
-- Omit the fact-caching section entirely when caching is not needed.
+- Omit fact-caching directives (`fact_caching`, `fact_caching_connection`, `fact_caching_timeout`) when playbooks make no use of `ansible_facts` lookups or role-level facts.
 
 ### SSH connection
 - Set `pipelining = true` when privilege escalation does not conflict with requiretty.
@@ -37,6 +38,12 @@ applyTo: "**/ansible.cfg"
 - Set `ssh_args` with `ControlMaster=auto` and `ControlPersist`.
 - Choose a `ControlPersist` duration proportional to the longest expected task gap.
 - Keep `host_key_checking` enabled by default.
+
+### Linting configuration
+- Maintain `.ansible-lint` at the project root with explicit `skip_list` and `warn_list` entries for project-specific exceptions.
+- Optionally override root `.ansible-lint` in `roles/common/.ansible-lint` or other specific roles when they have unique linting requirements (for example, roles with deprecated modules in `files/` or special template conventions).
+- When a role does not have its own `.ansible-lint`, it inherits the root project configuration during `ansible-lint` runs.
+- Document any role-specific lint suppressions with `# noqa: <rule>` comments directly in the affected code.
 
 ## Safety Guards
 

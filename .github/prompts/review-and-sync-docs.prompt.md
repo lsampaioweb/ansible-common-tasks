@@ -1,6 +1,6 @@
 ---
 description: "Use to synchronize Markdown documentation with current code and configuration behavior."
-argument-hint: "Optional: scope, folder path, or feature-area filter."
+argument-hint: "Required: scope, folder path, or feature-area filter; omit to sync from uncommitted changes then recent commits."
 ---
 
 # Markdown Documentation Sync Engine
@@ -12,7 +12,7 @@ argument-hint: "Optional: scope, folder path, or feature-area filter."
 
 ## 2. Resolution Rules
 - **Execution Target:** Update Markdown only when code or configuration changes alter documented behavior or setup.
-- **README Boundary:** Update `*.md` only when the mapped change affects onboarding, execution, or architecture.
+- **Markdown Boundary:** Update `*.md` only when the mapped change affects onboarding, execution, or architecture.
 - **Style Match:** Match existing formatting, heading style, and list conventions.
 - **Correction Protocol — Content:** Repair stale instructions, outdated keys, and deprecated paths.
 - **Correction Protocol — References:** Resolve broken links and replace obsolete examples.

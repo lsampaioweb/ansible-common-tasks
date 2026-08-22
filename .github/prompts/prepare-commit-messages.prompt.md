@@ -1,6 +1,6 @@
 ---
 description: "Use to cluster uncommitted changes into logical, feature-scoped Conventional Commits and execute after approval."
-argument-hint: "Optional: path or feature-scope filter."
+argument-hint: "Required: path or feature-scope filter; omit to cluster all uncommitted changes."
 ---
 
 # Logical Git Commit Engine
@@ -8,14 +8,16 @@ argument-hint: "Optional: path or feature-scope filter."
 ## 1. Scope & Analysis
 - Inspect uncommitted changes (`git status`, `git diff`).
 - Cluster files into atomic commits.
-- **Sort Order:** Foundational changes (config, schemas, deps) must be committed before feature layers.
-- **Grouping Boundary:** Group files strictly by **feature domain** (e.g., `auth`, `payment`).
-- **Documentation Gate:** If Markdown documentation exists for changed code but contains no corresponding updates, flag the affected docs and recommend running `review-and-sync-docs` before proceeding.
 
 ## 2. Resolution Rules
+- **Sort Order:** Commit foundational changes (config, schemas, deps) before feature layers.
+- **Grouping Boundary:** Group files strictly by feature domain (e.g., `auth`, `payment`).
+- **Documentation Gate:** If Markdown documentation exists for changed code but contains no corresponding updates, flag the affected docs and recommend running `review-and-sync-docs` before proceeding.
 - **Commit Format:** Use Conventional Commits only: `type(scope): description`.
 - **Scope Rule:** Use a feature domain or infrastructure area.
-- **Description Rule:** Imperative present tense; max 50 characters; no trailing period.
+- **Description Tense:** Write the description in imperative present tense.
+- **Description Length:** Keep the description at most 50 characters.
+- **Description Punctuation:** Do not end the description with a period.
 - **Body Rule:** Document the *why* and the *impact* only.
 - **Footer Rule:** Append `Closes #123` or tracking IDs if detected in branch or context.
 - **Post-approval:** Run `git add` and `git commit` sequentially for each cluster.

@@ -15,7 +15,7 @@
     regenerate: "{{ regenerate | default('full_idempotence') }}"
     comment: "{{ comment | default('HomeLab Certificate Authority OpenSSH Keypair') }}"
     state: "{{ state | default('present') }}"
-  register: "ca_output"
+  register: "ca_keypair_result"
 
 - name: "Editing the known_hosts file to trust servers with SSH keys signed by the Certificate Authority (CA) OpenSSH keypair"
   delegate_to: "{{ delegate_to | default('localhost') }}"

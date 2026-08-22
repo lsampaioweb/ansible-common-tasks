@@ -64,4 +64,4 @@
     label: "{{ item.name }}"
   register: "nssdb_cert_check_result"
   changed_when: nssdb_cert_check_result.rc == 0
-  failed_when: (nssdb_cert_check_result.rc != 0)
+  failed_when: nssdb_cert_check_result.rc != 0

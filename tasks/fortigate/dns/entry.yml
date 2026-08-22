@@ -8,7 +8,7 @@
     system_dns_database:
       name: "{{ desired_settings.name }}"
       dns_entry: "{{ desired_settings.dns_entry }}"
-  failed_when: false
+  failed_when: false  # Failure is validated in the next task; API errors are non-fatal
   register: "dns_entry_config_result"
 
 - name: "Debugging output from DNS entry"

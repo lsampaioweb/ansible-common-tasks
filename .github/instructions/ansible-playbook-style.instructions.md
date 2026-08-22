@@ -1,9 +1,13 @@
 ---
-description: "Playbook and task style contract for Ansible YAML files, including task naming, condition placement, and include/import policy."
+description: "Playbook and task style contract for Ansible YAML files, including task naming, condition placement, and task-level import/include policy."
 applyTo: "**/*.yml"
 ---
 
 # Ansible Playbook Style Contract
+
+## Dependencies
+
+- For role composition and directory structure, see `ansible-role.instructions.md` which applies these task conventions inside roles.
 
 ## Naming Conventions
 
@@ -34,16 +38,23 @@ applyTo: "**/*.yml"
 
 ### Import vs include policy
 - Use `ansible.builtin.import_tasks` for static task-file composition known at parse time.
-- Use `ansible.builtin.include_tasks` only when runtime evaluation is required, such as dynamic filenames, loops, or host-fact-driven branching.
-- Use `ansible.builtin.import_role` for static role composition known at parse time.
-- Use `ansible.builtin.include_role` only when runtime evaluation is required, such as dynamic role names, loops, or host-fact-driven branching.
-- Use `ansible.builtin.include_role` with `loop` when the same role must run multiple times with varying parameters.
+- Use `ansible.builtin.include_tasks` when static import cannot satisfy the use case (including but not limited to: dynamic filenames, loops, or host-fact-driven branching).
+- For role composition decisions (`import_role` vs `include_role`), see `ansible-role.instructions.md`.
+
+### Dynamic include safety
+- When using dynamic `include_tasks` with runtime variable interpolation (for example `include_tasks: "{{ variable }}.yml"`), document the expected file paths and valid variable values in a comment above the task.
+- Validate runtime variables before dispatch when feasible: use `assert` to confirm the variable is defined and matches an expected pattern, or gate the include with a `when` condition that validates the source.
+- On dynamic includes with optional file paths, use `block`/`rescue` to handle missing-file failures gracefully, or pre-check file existence with `stat` before attempting the include.
+- Example: if `include_tasks: "{{ config_vars.certificate.signing_provider | lower }}.yml"` may fail if the provider is invalid, add a preceding `assert` task: `assert: { that: config_vars.certificate.signing_provider in ['openssl', 'vault'], fail_msg: 'Invalid signing_provider' }`.
 
 ### Module and play declarations
 - Keep module invocations fully qualified (for example, `ansible.builtin.*`).
 - Replace deprecated modules before their announced ansible-core removal version.
 - Track deprecated-module replacements as planned work; do not defer migration past one minor release before removal.
-- Keep top-level play declarations explicit with `hosts` and `become` when privilege escalation is required.
+- Keep top-level play declarations explicit with `hosts` and a privilege model decision.
+- Set play-level `become` only when tasks require escalation from the connection user.
+- Do not require play-level `become` when the connection user is already privileged (for example, `ansible_user: root`).
+- During reviews, determine `become` requirements from executed tasks and effective connection user; never infer a violation from missing `become` alone.
 - Add `become: false` on tasks that must run as the calling user, not the become user.
 - Set `become_user` when the operation must run as a specific non-root user.
 - Always pair `become_user` with `become: true`.
@@ -85,7 +96,6 @@ applyTo: "**/*.yml"
 - After refactoring any `when`, `failed_when`, or `changed_when`, run syntax checks for all maintained inventories before merging.
 
 ### Variable and register conventions
-- Pass parameters to roles exclusively through `vars` on the `import_role` or `include_role` call.
 - Name `register` variables with a descriptive snake_case noun that reflects the registered data or operation intent.
 - Use `output` as the register variable name **only** for true pass-through task wrappers where the task directly invokes a role and returns its result unchanged (example: importing a role that handles apt packages and returning the apt result as-is).
 - For most tasks, prefer descriptive names: `package_list`, `service_status`, `installed_extensions`, `reboot_required`, etc.
