@@ -5,7 +5,10 @@
   register: "installed_vscode_extensions"
   changed_when: false
   # We ignore errors in case the 'code' command isn't available yet or if no extensions are installed.
-  failed_when: false
+  failed_when:
+    - installed_vscode_extensions.rc != 0
+    - "'No such file or directory' not in (installed_vscode_extensions.msg | default(''))"
+    - "'not found' not in (installed_vscode_extensions.stderr | default(''))"
 
 - name: "Installing desired VSCode extensions"
   # This is the key to idempotency:

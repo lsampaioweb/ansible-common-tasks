@@ -45,7 +45,8 @@
     label: "{{ item.name }}"
   register: "nssdb_existing_certs"
   changed_when: false
-  failed_when: false
+  failed_when:
+    - nssdb_existing_certs.rc not in [0, 1, 255]
 
 - name: "Installing the certificates at '{{ nssdb_path }}'"
   when:

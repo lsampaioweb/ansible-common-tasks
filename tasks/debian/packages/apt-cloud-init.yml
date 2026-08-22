@@ -1,11 +1,18 @@
 ---
+- name: "Checking if cloud-init is installed"
+  ansible.builtin.stat:
+    path: "/usr/bin/cloud-init"
+  register: "cloud_init_binary"
+  changed_when: false
+
 - name: "Waiting for cloud-init / user-data to finish"
+  when:
+    - cloud_init_binary.stat.exists
   # No native Ansible module exists for cloud-init status --wait.
   ansible.builtin.command:
     cmd: "cloud-init status --wait"
   register: "cloud_init_status"
   changed_when: false
-  failed_when: false
 
 - name: "Validating cloud-init completion status"
   when: cloud_init_status.rc != 0
