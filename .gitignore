@@ -10,3 +10,6 @@
 # VS Code settings should be ignored.
 .vscode/
 
+
+# The AI custom files should be ignored.
+.github/
