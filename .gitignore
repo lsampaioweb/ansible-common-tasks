@@ -4,8 +4,11 @@
 .AppleDouble
 .LSOverride
 
-.vscode/
+# Ansible settings should be ignored.
 .ansible/
+
+# VS Code settings should be ignored.
+.vscode/
 
 # The AI custom files should be ignored.
 .github/
