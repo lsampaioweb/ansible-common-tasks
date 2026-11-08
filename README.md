@@ -245,6 +245,11 @@ Common handlers available in `handlers/main.yml`:
 - Updating CA certificates
 - Refreshing shell environment
 
+Handlers that set a service's state to `restarted` run asynchronously
+(`async: 60`, `poll: 0`). Ansible does not wait for these jobs to finish or
+automatically report their final results. Flushing handlers starts the jobs but
+does not wait for their completion.
+
 ## Requirements
 
 - Ansible 2.10+

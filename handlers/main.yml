@@ -21,34 +21,46 @@
   ansible.builtin.systemd:
     name: "systemd-timesyncd"
     state: "restarted"
+  poll: 0
+  async: 60
 
 - name: "Restarting Chronyd"
   ansible.builtin.systemd:
     name: "chronyd"
     state: "restarted"
+  poll: 0
+  async: 60
 
 - name: "Restarting Systemd-Resolved"
   ansible.builtin.systemd:
     name: "systemd-resolved"
     state: "restarted"
+  poll: 0
+  async: 60
 
 - name: "Restarting Xrdp"
   ansible.builtin.systemd:
     name: "xrdp"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Restarting Bind9"
   ansible.builtin.systemd:
     name: "bind9"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Restarting Chrony"
   ansible.builtin.systemd:
     name: "chrony"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Enabling Packer autocomplete"
   become: false
@@ -122,18 +134,24 @@
     name: "fail2ban"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Restarting the SSH server"
   ansible.builtin.systemd:
     name: "ssh"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Restarting and Enabling docker"
   ansible.builtin.systemd:
     name: "docker"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Refreshing ~/.bashrc"
   become: false
@@ -151,6 +169,8 @@
     name: "keepalived"
     state: "restarted"
     enabled: true
+  poll: 0
+  async: 60
 
 - name: "Restarting qemu-guest-agent"
   ansible.builtin.systemd:
