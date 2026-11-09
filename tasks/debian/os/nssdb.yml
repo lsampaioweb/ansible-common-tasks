@@ -10,21 +10,21 @@
     path: "{{ nssdb_path }}"
   register: "nssdb_stat"
 
-- name: "Creating the folder '{{ nssdb_path }}'"
+- name: "Preparing the user's NSS database at '{{ nssdb_path }}'"
   when:
     - not nssdb_stat.stat.exists
-  ansible.builtin.file:
-    path: "{{ nssdb_path }}"
-    state: "directory"
-    recurse: true
+  block:
+    - name: "Creating the folder '{{ nssdb_path }}'"
+      ansible.builtin.file:
+        path: "{{ nssdb_path }}"
+        state: "directory"
+        recurse: true
 
-- name: "Initializing an empty database at '{{ nssdb_path }}'"
-  when:
-    - not nssdb_stat.stat.exists
-  # No native Ansible module exists for certutil.
-  ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
-  register: "nssdb_result"
-  changed_when: nssdb_result.rc == 0
+    - name: "Initializing an empty database at '{{ nssdb_path }}'"
+      # No native Ansible module exists for certutil.
+      ansible.builtin.command: "certutil -N -d sql:{{ nssdb_path }} --empty-password"
+      register: "nssdb_result"
+      changed_when: nssdb_result.rc == 0
 
 - name: "Checking if certificate files exist"
   ansible.builtin.stat:

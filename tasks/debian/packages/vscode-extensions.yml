@@ -11,8 +11,6 @@
     - "'not found' not in (installed_vscode_extensions.stderr | default(''))"
 
 - name: "Installing desired VSCode extensions"
-  # This is the key to idempotency:
-  # The task only runs if the extension name is NOT in the list we registered.
   when:
     - installed_vscode_extensions.stdout is defined
     - item.name not in installed_vscode_extensions.stdout_lines
