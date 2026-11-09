@@ -58,7 +58,7 @@ The role identity is `lsampaioweb.common`. Run `ansible-lint --profile productio
 
 #### Known Hosts Management
 - `debian/known_hosts/add.yml` — Add SSH host fingerprints to known_hosts
-- `debian/known_hosts/add_current.yml` — Add fingerprints for current host
+- `debian/known_hosts/add-current.yml` — Add fingerprints for current host
 - `debian/known_hosts/remove.yml` — Remove fingerprints from known_hosts
 
 #### Network Configuration
@@ -151,7 +151,7 @@ The role identity is `lsampaioweb.common`. Run `ansible-lint --profile productio
 ### Utilities
 
 - `utils/password/random.yml` — Generate random passwords
-- `utils/format_certificate_serial.yml` — Format certificate serial numbers (Decimal to Hex with colons)
+- `utils/format-certificate-serial.yml` — Format certificate serial numbers (Decimal to Hex with colons)
 
 ## Variable Patterns
 
